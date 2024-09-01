@@ -12,6 +12,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            flex-direction: column;
         }
         .game-container {
             background-color: #fff;
@@ -28,7 +29,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-        .input-button, .level-button, .next-level-button {
+        .input-button, .level-button, .next-level-button, .retry-button {
             margin: 10px;
             padding: 10px 20px;
             font-size: 18px;
@@ -49,8 +50,19 @@
         .output-led.off {
             background-color: red;
         }
-        .next-level-button {
+        .next-level-button, .retry-button {
             display: none;
+        }
+        .feedback {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        .circuit-diagram {
+            margin: 20px 0;
+        }
+        .circuit-diagram img {
+            max-width: 100%;
+            height: auto;
         }
     </style>
 </head>
@@ -67,15 +79,17 @@
     <!-- Contenedor del juego -->
     <div class="game-container" id="game-container">
         <h2 id="level-title">Nivel Bajo - Nivel 1</h2>
+        <div id="circuit-diagram" class="circuit-diagram"></div>
         <p>Manipula las entradas y observa el resultado:</p>
         <div id="buttons-container"></div>
         <div class="output-led off" id="output">OFF</div>
+        <div class="feedback" id="feedback"></div>
+        <button class="retry-button" id="retry-level" onclick="retryLevel()">Volver a Jugar</button>
         <button class="next-level-button" id="next-level" onclick="startNextLevel()">Avanzar al Siguiente Nivel</button>
     </div>
 
     <!-- Incluir el archivo JavaScript -->
-    <script src="Proyecto MD.js"></script>
+    <script src="juego.js"></script>
 </body>
 </html>
-
 
