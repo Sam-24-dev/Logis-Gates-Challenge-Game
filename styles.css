@@ -1,0 +1,164 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #0c0101;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    margin: 0;
+}
+
+.intro-screen, .game-container, .level-selection {
+    background-color: #9dbcf5;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: none;
+}
+
+.game-container {
+    background-color: #9dbcf5;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: none;
+    min-width: 600px;
+    max-width: 80%; /* Esto se asegura de que no se desborde del viewport */
+}
+
+.input-button, .level-button, .next-level-button, .retry-button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #E67E22;
+    color: #241111;
+    transition: background-color 0.3s;
+}
+
+.input-button.on {
+    background-color: #2ECC71;
+}
+
+.input-button.off {
+    background-color: #E74C3C;
+}
+
+.input-button:hover, .level-button:hover, .next-level-button:hover, .retry-button:hover {
+    background-color: #0056b3;
+}
+
+.output-led {
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 24px;
+    border-radius: 5px;
+    display: inline-block;
+    width: 100px;
+    color: #241111;
+    transition: background-color 0.3s;
+}
+
+.output-led.on {
+    background-color: #2ECC71;
+}
+
+.output-led.off {
+    background-color: #E74C3C;
+}
+
+.next-level-button, .retry-button {
+    display: none;
+}
+
+.feedback {
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.circuit-diagram {
+    margin: 10px 0;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 300px;
+}
+
+.circuit-line {
+    position: absolute;
+    border-top: 5px solid black;
+    height: 0;
+    transform: translateY(-50%); /* Centra la línea verticalmente */
+    overflow: hidden; /* Evita desbordamientos */
+}
+
+.circuit-gate {
+    position: absolute;
+    font-weight: bold;
+    text-align: center;
+    width: 45px; /* Ancho original */
+    height: 90px; /* Altura aumentada para hacerla más larga verticalmente */
+    background-color: #95A5A6;
+    border: 3px solid black;
+    border-radius: 5px;
+    line-height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.circuit-output {
+    position: absolute;
+    font-size: 50px; /* Aumenta el tamaño de la fuente si es necesario */
+    width: 70px; /* Aumenta el ancho del círculo */
+    height: 70px; /* Aumenta la altura del círculo para mantener la forma redonda */
+    border-radius: 50%; /* Mantén esto al 50% para que siga siendo un círculo */
+    background-color: gray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #080404;
+    transition: background-color 0.3s;
+}
+
+.circuit-output.on {
+    background-color: #2ECC71;
+}
+
+.circuit-output.off {
+    background-color: #E74C3C;
+}
+
+/* Estilo para el feedback */
+.feedback {
+    margin-top: 20px;
+    font-size: 20px; /* Aumenta el tamaño de la letra */
+    color: #080404; /* Cambia el color del texto */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

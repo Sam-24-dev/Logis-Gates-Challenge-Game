@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logic Gates Challenge</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Pantalla de introducción -->
+    <div class="intro-screen" id="intro-screen">
+        <h2>Bienvenido al Logic Gates Challenge</h2>
+        <p>¡Prepárate para resolver desafíos lógicos y mejorar tus habilidades!</p>
+        <button class="input-button" onclick="showLevelSelection()">Continuar</button>
+    </div>
+
+    <!-- Pantalla de selección de nivel -->
+    <div class="level-selection" id="level-selection" style="display: none;">
+        <h2>Selecciona el nivel de dificultad para empezar:</h2>
+        <button class="level-button" onclick="startLevel('easy')">Nivel Bajo (Fácil)</button>
+        <button class="level-button" onclick="startLevel('hard')">Nivel Alto (Difícil)</button>
+    </div>
+
+    <!-- Contenedor del juego -->
+    <div class="game-container" id="game-container" style="display: none;">
+        <h2 id="level-title">Nivel Bajo - Nivel 1</h2>
+        <div id="circuit-diagram" class="circuit-diagram">
+            <!-- Aquí están las entradas A, B, C, D con clases específicas -->
+            <div class="circuit-gate circuit-input-A">A</div>
+            <div class="circuit-gate circuit-input-B">B</div>
+            <div class="circuit-gate circuit-input-C">C</div>
+            <div class="circuit-gate circuit-input-D">D</div>
+        </div>
+        <p>Manipula las entradas y observa el resultado:</p>
+        <div id="buttons-container"></div>
+        <div class="output-led off" id="output">0</div>
+        <div class="feedback" id="feedback"></div>
+        <button class="retry-button" id="retry-level" style="display: none;" onclick="retryLevel()">Volver a Jugar</button>
+        <button class="next-level-button" id="next-level" style="display: none;" onclick="startNextLevel()">Avanzar al Siguiente Nivel</button>
+        <button class="input-button" id="go-back-menu" style="display: none;" onclick="goBackToLevelSelection()">Regresar al Menú Principal</button>
+    </div>
+
+    <!-- Incluir el archivo JavaScript -->
+    <script src="Proyecto MD.js"></script>
+
+</body>
+</html>
