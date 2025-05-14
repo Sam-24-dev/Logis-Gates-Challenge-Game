@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('intro-screen').style.display = 'block';
 });
 
-// Inicialización de los niveles
+// Inicialización de los Niveles
 let currentLevel = 1;
 let difficulty = 'easy';
 let inputStates = {};
