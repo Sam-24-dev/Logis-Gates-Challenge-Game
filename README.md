@@ -5,7 +5,7 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-121013?style=for-the-badge&logo=github&logoColor=white)
 
-[![Logic Gates Challenge Game overview](overview.png)](https://sam-24-dev.github.io/Logis-Gates-Challenge-Game/)
+[![Logic Gates Challenge Game overview](assets/overview.png)](https://sam-24-dev.github.io/Logis-Gates-Challenge-Game/)
 
 **Logic Gates Challenge Game** is an interactive educational web game designed to help learners understand and practice digital logic gates. Through progressive levels and live circuit visualization, players can explore how binary inputs combine to produce the correct output.
 
@@ -25,7 +25,7 @@ As players progress, the circuits become more complex and challenging.
 
 | Welcome Screen | Difficulty Selection |
 | --- | --- |
-| ![Welcome screen](welcome.png) | ![Difficulty selection](difficulty.png) |
+| ![Welcome screen](assets/welcome.png) | ![Difficulty selection](assets/difficulty.png) |
 
 ## ✨ Key Features
 
@@ -67,13 +67,14 @@ As players progress, the circuits become more complex and challenging.
 
 ```text
 Logis-Gates-Challenge-Game/
-├── index.html       # Main structure of the game
-├── styles.css       # Styling and visual design
-├── Proyecto MD.js   # Game logic and functionality
-├── overview.png     # README hero image
-├── welcome.png      # Welcome screen screenshot
-├── difficulty.png   # Difficulty selection screenshot
-└── README.md        # Project documentation
+├── assets/
+│   ├── overview.png
+│   ├── welcome.png
+│   └── difficulty.png
+├── index.html
+├── styles.css
+├── Proyecto MD.js
+└── README.md
 ```
 
 ## 🗂️ Main Files
