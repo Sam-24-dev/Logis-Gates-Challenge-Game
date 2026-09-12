@@ -21,11 +21,11 @@ export const defaultProgress: StoredProgress = {
 };
 
 function getDefaultStorage(): Storage | null {
-  if (typeof window === "undefined") {
+  try {
+    return typeof window === "undefined" ? null : window.localStorage;
+  } catch {
     return null;
   }
-
-  return window.localStorage;
 }
 
 function toSafeNumber(value: unknown) {
