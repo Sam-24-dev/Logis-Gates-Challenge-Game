@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { levelsByDifficulty } from "../../data/levels";
 import { CircuitBoard } from "./CircuitBoard";
 
-describe("CircuitBoard mobile hit testing", () => {
+describe("CircuitBoard", () => {
   it("routes overlapping pointer clicks to the nearest visual input", () => {
     const onToggleInput = vi.fn();
     const boardWidth = 257.1875;
@@ -51,5 +51,24 @@ describe("CircuitBoard mobile hit testing", () => {
     );
 
     expect(onToggleInput.mock.calls).toEqual([["A"], ["C"]]);
+  });
+
+  it("describes challenge topology in signal-flow order", () => {
+    render(
+      <CircuitBoard
+        heading="Reto 5"
+        inputStates={{ A: true, B: false, C: false, D: false }}
+        level={levelsByDifficulty.hard[5]}
+        pulse={null}
+        result={false}
+        revealOutput={false}
+        onToggleInput={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("img", { name: /reto 5/i }))
+      .toHaveAccessibleDescription(
+        "Topología del circuito. Compuerta 1, NOR: recibe la entrada A y la entrada B. Compuerta 2, XOR: recibe la salida de la compuerta 1 y la entrada C. Compuerta 3, AND: recibe la salida de la compuerta 2 y la entrada D. La salida del circuito recibe la salida de la compuerta 3.",
+      );
   });
 });

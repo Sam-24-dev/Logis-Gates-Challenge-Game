@@ -1,4 +1,4 @@
-import type { MouseEvent, ReactElement } from "react";
+import { useId, type MouseEvent, type ReactElement } from "react";
 import { evaluateGate } from "../../core/evaluateGate";
 import type {
   CircuitNode,
@@ -68,6 +68,28 @@ function evaluateNode(node: CircuitNode, inputStates: InputStates): boolean {
     node.gate,
     node.inputs.map((input) => evaluateNode(input, inputStates)),
   );
+}
+
+function describeCircuitTopology(output: CircuitNode) {
+  const gateDescriptions: string[] = [];
+
+  function describeSource(node: CircuitNode): string {
+    if (node.type === "input") {
+      return `la entrada ${node.name}`;
+    }
+
+    const sources = node.inputs.map(describeSource);
+    const gateNumber = gateDescriptions.length + 1;
+    gateDescriptions.push(
+      `Compuerta ${gateNumber}, ${node.gate}: recibe ${sources.join(" y ")}.`,
+    );
+
+    return `la salida de la compuerta ${gateNumber}`;
+  }
+
+  const outputSource = describeSource(output);
+
+  return `Topología del circuito. ${gateDescriptions.join(" ")} La salida del circuito recibe ${outputSource}.`;
 }
 
 function SignalWire({ d, isActive, variant = "default" }: SignalWireProps) {
@@ -467,6 +489,7 @@ export function CircuitBoard({
   revealOutput = true,
   onToggleInput,
 }: CircuitBoardProps) {
+  const topologyDescriptionId = useId();
   const outputText = formatValue(result);
   const outputDescription = revealOutput
     ? `Salida actual ${outputText}`
@@ -506,10 +529,14 @@ export function CircuitBoard({
         <svg
           viewBox="0 0 860 480"
           role="img"
+          aria-describedby={topologyDescriptionId}
           aria-label={`${heading}. ${outputDescription}. Entradas: ${level.inputs
             .map((input) => `${input} igual ${formatValue(inputStates[input])}`)
             .join(", ")}.`}
         >
+          <desc id={topologyDescriptionId}>
+            {describeCircuitTopology(level.circuit.output)}
+          </desc>
           {boardContent}
         </svg>
         <div
