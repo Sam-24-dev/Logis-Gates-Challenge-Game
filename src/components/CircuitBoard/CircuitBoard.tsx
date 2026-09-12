@@ -1,4 +1,4 @@
-import type { ReactElement } from "react";
+import type { MouseEvent, ReactElement } from "react";
 import { evaluateGate } from "../../core/evaluateGate";
 import type {
   CircuitNode,
@@ -435,6 +435,29 @@ function getInputNodeHotspots(level: LevelDefinition) {
   }));
 }
 
+function getClosestInputHotspot(
+  inputHotspots: ReturnType<typeof getInputNodeHotspots>,
+  clientX: number,
+  clientY: number,
+  bounds: DOMRect,
+) {
+  const pointerX = ((clientX - bounds.left) / bounds.width) * 860;
+  const pointerY = ((clientY - bounds.top) / bounds.height) * 480;
+
+  return inputHotspots.reduce((closest, hotspot) => {
+    const closestDistance = Math.hypot(
+      closest.x - pointerX,
+      closest.y - pointerY,
+    );
+    const hotspotDistance = Math.hypot(
+      hotspot.x - pointerX,
+      hotspot.y - pointerY,
+    );
+
+    return hotspotDistance < closestDistance ? hotspot : closest;
+  }).input;
+}
+
 export function CircuitBoard({
   heading,
   inputStates,
@@ -455,6 +478,27 @@ export function CircuitBoard({
     revealOutput,
   );
   const inputHotspots = getInputNodeHotspots(level);
+  const handlePointerClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (event.detail === 0) {
+      return;
+    }
+
+    const bounds = event.currentTarget.getBoundingClientRect();
+    if (!bounds.width || !bounds.height) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    onToggleInput(
+      getClosestInputHotspot(
+        inputHotspots,
+        event.clientX,
+        event.clientY,
+        bounds,
+      ),
+    );
+  };
 
   return (
     <div className={`level-board ${pulse ? `is-${pulse}-pulse` : ""}`}>
@@ -472,6 +516,7 @@ export function CircuitBoard({
           className="level-node-hotspots"
           role="group"
           aria-label="Controles del circuito"
+          onClickCapture={handlePointerClick}
         >
           {inputHotspots.map(({ input, x, y }) => {
             const isOn = Boolean(inputStates[input]);
