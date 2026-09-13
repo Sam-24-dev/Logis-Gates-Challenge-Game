@@ -44,6 +44,26 @@ describe("stored progress", () => {
     );
   });
 
+  it("falls back safely when the default localStorage getter throws", () => {
+    const descriptor = Object.getOwnPropertyDescriptor(window, "localStorage");
+
+    Object.defineProperty(window, "localStorage", {
+      configurable: true,
+      get() {
+        throw new Error("storage unavailable");
+      },
+    });
+
+    try {
+      expect(loadStoredProgress()).toEqual(defaultProgress);
+      expect(saveStoredProgress(defaultProgress)).toBe(false);
+    } finally {
+      if (descriptor) {
+        Object.defineProperty(window, "localStorage", descriptor);
+      }
+    }
+  });
+
   it("merges progress by keeping the best completed levels, score, and streak", () => {
     const progress = mergeProgress(defaultProgress, {
       bestChallengeScore: 3200,
