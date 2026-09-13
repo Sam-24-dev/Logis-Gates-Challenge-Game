@@ -11,6 +11,7 @@ import { evaluateCircuit } from "../core/evaluateCircuit";
 import {
   loadStoredProgress,
   mergeProgress,
+  progressStorageKey,
   saveStoredProgress,
   type ProgressPatch,
 } from "../core/progress";
@@ -132,6 +133,17 @@ export function App() {
   }, []);
 
   useEffect(() => {
+    const syncStoredProgress = (event: StorageEvent) => {
+      if (event.key === progressStorageKey) {
+        setStoredProgress(loadStoredProgress());
+      }
+    };
+
+    window.addEventListener("storage", syncStoredProgress);
+    return () => window.removeEventListener("storage", syncStoredProgress);
+  }, []);
+
+  useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
 
@@ -164,11 +176,18 @@ export function App() {
   }, [difficulty, levelStartedAt, screen]);
 
   function persistProgress(patch: ProgressPatch) {
-    setStoredProgress((previous) => {
-      const nextProgress = mergeProgress(previous, patch);
-      saveStoredProgress(nextProgress);
-      return nextProgress;
-    });
+    const previousPersistedProgress = mergeProgress(
+      loadStoredProgress(),
+      storedProgress,
+    );
+    const nextProgress = mergeProgress(previousPersistedProgress, patch);
+
+    if (!saveStoredProgress(nextProgress)) {
+      return null;
+    }
+
+    setStoredProgress(nextProgress);
+    return previousPersistedProgress;
   }
 
   function prepareLevelClock() {
@@ -293,13 +312,15 @@ export function App() {
 
     setChallengeScore(finalScore);
     setChallengeStreak(finalStreak);
-    persistProgress({
+    const previousPersistedProgress = persistProgress({
       bestChallengeScore: isCompletingChallenge ? finalScore : 0,
       bestChallengeStreak: finalStreak,
       challengeCompletedLevels: currentLevel,
     });
     setChallengeRunIsBest(
-      isCompletingChallenge && finalScore > storedProgress.bestChallengeScore,
+      isCompletingChallenge &&
+        previousPersistedProgress !== null &&
+        finalScore > previousPersistedProgress.bestChallengeScore,
     );
     startNextLevel();
   }
