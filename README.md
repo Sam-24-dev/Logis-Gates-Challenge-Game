@@ -5,7 +5,7 @@
 ![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=061018)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Vitest](https://img.shields.io/badge/Vitest-40%2F40_tests-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-41%2F41_tests-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-Production-000000?style=for-the-badge&logo=vercel&logoColor=white)
 ![Lighthouse accessibility audit](https://img.shields.io/badge/Lighthouse_Accessibility-100%2F100-success?style=for-the-badge)
 
@@ -91,7 +91,7 @@ npm audit --audit-level=high
 git --no-pager diff --check
 ```
 
-Current automated test baseline: **40/40 passing**.
+Current automated test baseline: **41/41 passing**.
 
 Manual checks include console, responsive widths (`320`, `375`, `768`, `1024`, `1365`, `1440`), keyboard/focus behavior, tap target size, sitemap XML, robots.txt, and Vercel headers.
 
@@ -250,13 +250,13 @@ Out of scope for this V2:
 *Junior Data Engineer & Analyst*
 
 <a href="https://portafolio-samir-tau.vercel.app/">
-  <img src="https://img.shields.io/badge/Portfolio-Visit_Website-success?style=for-the-badge&logo=vercel&logoColor=white" alt="Portfolio" />
+  <img src="https://img.shields.io/badge/Portfolio-Visit_Website-success?style=for-the-badge&logo=vercel&logoColor=white" alt="Visit portfolio" />
 </a>
 <a href="https://www.linkedin.com/in/samir-caizapasto/">
-  <img src="https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" />
+  <img src="https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="Connect on LinkedIn" />
 </a>
 <a href="mailto:samir.leonardo.caizapasto04@gmail.com">
-  <img src="https://img.shields.io/badge/Email-Contact_Me-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
+  <img src="https://img.shields.io/badge/Email-Contact_Me-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Send email" />
 </a>
 
 <br />
