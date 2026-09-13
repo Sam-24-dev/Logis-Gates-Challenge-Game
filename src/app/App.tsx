@@ -152,7 +152,7 @@ export function App() {
       return undefined;
     }
 
-    const focusHandle = window.requestAnimationFrame(()始化 => {
+    const focusHandle = window.requestAnimationFrame(() => {
       document.querySelector<HTMLElement>("h1")?.focus({ preventScroll: true });
     });
 
