@@ -85,13 +85,10 @@ button:disabled {
 
 button:focus-visible,
 [role="button"]:focus-visible,
-a:focus-visible {
+a:focus-visible,
+h1[tabindex="-1"]:focus {
     outline: 3px solid var(--color-warm);
     outline-offset: 4px;
-}
-
-h1:focus {
-    outline: none;
 }
 
 .skip-link {
