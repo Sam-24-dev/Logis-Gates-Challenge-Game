@@ -28,18 +28,19 @@ import type {
   LevelDefinition,
   Screen,
 } from "./appTypes";
+import { retryLazyImport } from "./retryLazyImport";
 
-function createLazyScreens() {
+function createLazyScreens(attempt = 0) {
   return {
     LevelScreen: lazy(() =>
-      import("../screens/LevelScreen").then((module) => ({
-        default: module.LevelScreen,
-      })),
+      retryLazyImport(() => import("../screens/LevelScreen"), attempt).then(
+        (module) => ({ default: module.LevelScreen }),
+      ),
     ),
     ResultsScreen: lazy(() =>
-      import("../screens/ResultsScreen").then((module) => ({
-        default: module.ResultsScreen,
-      })),
+      retryLazyImport(() => import("../screens/ResultsScreen"), attempt).then(
+        (module) => ({ default: module.ResultsScreen }),
+      ),
     ),
   };
 }
@@ -285,10 +286,10 @@ export function App() {
   }
 
   function retryLazyScreen() {
-    setLazyScreens((previous) => ({
-      ...createLazyScreens(),
-      attempt: previous.attempt + 1,
-    }));
+    setLazyScreens((previous) => {
+      const attempt = previous.attempt + 1;
+      return { ...createLazyScreens(attempt), attempt };
+    });
   }
 
   function resetChallengeRun() {

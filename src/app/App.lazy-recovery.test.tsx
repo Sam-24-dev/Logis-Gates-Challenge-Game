@@ -16,6 +16,7 @@ vi.mock("../screens/LevelScreen", async () => {
 });
 
 import { App } from "./App";
+import { retryLazyImport } from "./retryLazyImport";
 
 beforeEach(() => {
   levelScreenLoader.attempts = 0;
@@ -24,6 +25,23 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.restoreAllMocks();
+});
+
+it("cache-busts a browser-cached chunk failure on retry", async () => {
+  const chunkUrl = `${window.location.origin}/assets/LevelScreen.js`;
+  const cachedFailure = new TypeError(
+    `Failed to fetch dynamically imported module: ${chunkUrl}`,
+  );
+  const retryImport = vi.fn().mockResolvedValue({ value: "loaded" });
+
+  await expect(
+    retryLazyImport<{ value: string }>(
+      () => Promise.reject(cachedFailure),
+      2,
+      retryImport,
+    ),
+  ).resolves.toEqual({ value: "loaded" });
+  expect(retryImport).toHaveBeenCalledWith(`${chunkUrl}#retry=2`);
 });
 
 it("recovers a failed lazy screen and focuses its heading after retry", async () => {
