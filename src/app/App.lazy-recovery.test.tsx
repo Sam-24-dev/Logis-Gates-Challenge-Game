@@ -5,6 +5,7 @@ const levelScreenLoader = vi.hoisted(() => ({ attempts: 0 }));
 
 vi.mock("../screens/LevelScreen", async () => {
   levelScreenLoader.attempts += 1;
+
   if (levelScreenLoader.attempts === 1) {
     throw new Error("level chunk unavailable");
   }
@@ -17,8 +18,8 @@ vi.mock("../screens/LevelScreen", async () => {
 import { App } from "./App";
 
 beforeEach(() => {
-  window.localStorage.clear();
   levelScreenLoader.attempts = 0;
+  window.localStorage.clear();
 });
 
 afterEach(() => {

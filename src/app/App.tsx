@@ -1,4 +1,5 @@
 import {
+  Component,
   Suspense,
   lazy,
   useCallback,
@@ -6,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ReactNode,
 } from "react";
 import { evaluateCircuit } from "../core/evaluateCircuit";
 import {
@@ -27,16 +29,20 @@ import type {
   Screen,
 } from "./appTypes";
 
-const LevelScreen = lazy(() =>
-  import("../screens/LevelScreen").then((module) => ({
-    default: module.LevelScreen,
-  })),
-);
-const ResultsScreen = lazy(() =>
-  import("../screens/ResultsScreen").then((module) => ({
-    default: module.ResultsScreen,
-  })),
-);
+function createLazyScreens() {
+  return {
+    LevelScreen: lazy(() =>
+      import("../screens/LevelScreen").then((module) => ({
+        default: module.LevelScreen,
+      })),
+    ),
+    ResultsScreen: lazy(() =>
+      import("../screens/ResultsScreen").then((module) => ({
+        default: module.ResultsScreen,
+      })),
+    ),
+  };
+}
 
 const firstLevel = 1;
 
@@ -46,6 +52,83 @@ function ScreenLoadingFallback() {
       <p className="screen-kicker">Cargando laboratorio…</p>
     </main>
   );
+}
+
+function ScreenLoadError({
+  onBackToMode,
+  onRetry,
+}: {
+  onBackToMode: () => void;
+  onRetry: () => void;
+}) {
+  return (
+    <main className="app-shell" data-screen="load-error">
+      <section
+        className="level-selection lab-panel"
+        aria-labelledby="screen-load-error-title"
+      >
+        <span className="screen-kicker">Carga interrumpida</span>
+        <h1 id="screen-load-error-title" tabIndex={-1}>
+          No pudimos cargar esta pantalla
+        </h1>
+        <p>Comprueba tu conexión y vuelve a intentarlo.</p>
+        <div className="command-row">
+          <button className="level-button" type="button" onClick={onRetry}>
+            Reintentar
+          </button>
+          <button
+            className="level-button"
+            type="button"
+            onClick={onBackToMode}
+          >
+            Volver a elegir modo
+          </button>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+type LazyScreenErrorBoundaryProps = {
+  children: ReactNode;
+  onBackToMode: () => void;
+  onRetry: () => void;
+};
+
+class LazyScreenErrorBoundary extends Component<
+  LazyScreenErrorBoundaryProps,
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <ScreenLoadError
+          onBackToMode={this.props.onBackToMode}
+          onRetry={this.props.onRetry}
+        />
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+function FocusAfterMount({ children }: { children: ReactNode }) {
+  useEffect(() => {
+    const focusHandle = window.requestAnimationFrame(() => {
+      document.querySelector<HTMLElement>("h1")?.focus({ preventScroll: true });
+    });
+
+    return () => window.cancelAnimationFrame(focusHandle);
+  }, []);
+
+  return <>{children}</>;
 }
 
 function createInitialInputStates(level: LevelDefinition): InputStates {
@@ -114,6 +197,12 @@ export function App() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [storedProgress, setStoredProgress] = useState(loadStoredProgress);
   const [challengeRunIsBest, setChallengeRunIsBest] = useState(false);
+  const [lazyScreens, setLazyScreens] = useState(() => ({
+    ...createLazyScreens(),
+    attempt: 0,
+  }));
+  const LazyLevelScreen = lazyScreens.LevelScreen;
+  const LazyResultsScreen = lazyScreens.ResultsScreen;
   const hasFocusedInitialScreen = useRef(false);
   const challengeSubmissionLockRef = useRef(false);
   const totalLevels = Object.keys(levelsByDifficulty[difficulty]).length;
@@ -193,6 +282,13 @@ export function App() {
   function prepareLevelClock() {
     setLevelStartedAt(null);
     setElapsedSeconds(0);
+  }
+
+  function retryLazyScreen() {
+    setLazyScreens((previous) => ({
+      ...createLazyScreens(),
+      attempt: previous.attempt + 1,
+    }));
   }
 
   function resetChallengeRun() {
@@ -399,50 +495,66 @@ export function App() {
   if (screen === "results") {
     return (
       <Suspense fallback={<ScreenLoadingFallback />}>
-        <ResultsScreen
-          challengeSummary={{
-            score: challengeScore,
-            streak: challengeStreak,
-          }}
-          completedDifficulty={difficulty}
-          completedLevels={Object.values(levelsByDifficulty[difficulty])}
-          isNewBestChallengeScore={challengeRunIsBest}
-          progress={storedProgress}
-          onChallenge={() => startLevel("hard")}
-          onHome={goHome}
-          onPracticeAgain={() => startLevel("easy")}
-        />
+        <FocusAfterMount key={`results-${lazyScreens.attempt}`}>
+          <LazyScreenErrorBoundary
+            onBackToMode={() => setScreen("modeSelection")}
+            onRetry={retryLazyScreen}
+          >
+            <LazyResultsScreen
+              challengeSummary={{
+                score: challengeScore,
+                streak: challengeStreak,
+              }}
+              completedDifficulty={difficulty}
+              completedLevels={Object.values(levelsByDifficulty[difficulty])}
+              isNewBestChallengeScore={challengeRunIsBest}
+              progress={storedProgress}
+              onChallenge={() => startLevel("hard")}
+              onHome={goHome}
+              onPracticeAgain={() => startLevel("easy")}
+            />
+          </LazyScreenErrorBoundary>
+        </FocusAfterMount>
       </Suspense>
     );
   }
 
   return (
     <Suspense fallback={<ScreenLoadingFallback />}>
-      <LevelScreen
-        currentLevel={currentLevel}
-        difficulty={difficulty}
-        inputStates={inputStates}
-        level={activeLevel}
-        result={result}
-        totalLevels={totalLevels}
-        challengeState={{
-          elapsedSeconds,
-          hasSubmittedCurrentLevel: challengeHasSubmittedCurrentLevel,
-          lastPoints: challengeLastPoints,
-          lastWasCorrect: challengeLastWasCorrect,
-          score: challengeScore,
-          streak: challengeStreak,
-          submissionLocked:
-            challengeSubmissionLocked || levelStartedAt === null,
-          wrongSubmissions: challengeWrongSubmissions,
-        }}
-        onBackToMode={() => setScreen("modeSelection")}
-        onChallengeReady={startLevelClock}
-        onNextLevel={startNextLevel}
-        onRetry={retryLevel}
-        onSubmitAnswer={submitChallengeAnswer}
-        onToggleInput={toggleInput}
-      />
+      <FocusAfterMount
+        key={`game-${currentLevel}-${lazyScreens.attempt}`}
+      >
+        <LazyScreenErrorBoundary
+          onBackToMode={() => setScreen("modeSelection")}
+          onRetry={retryLazyScreen}
+        >
+          <LazyLevelScreen
+            currentLevel={currentLevel}
+            difficulty={difficulty}
+            inputStates={inputStates}
+            level={activeLevel}
+            result={result}
+            totalLevels={totalLevels}
+            challengeState={{
+              elapsedSeconds,
+              hasSubmittedCurrentLevel: challengeHasSubmittedCurrentLevel,
+              lastPoints: challengeLastPoints,
+              lastWasCorrect: challengeLastWasCorrect,
+              score: challengeScore,
+              streak: challengeStreak,
+              submissionLocked:
+                challengeSubmissionLocked || levelStartedAt === null,
+              wrongSubmissions: challengeWrongSubmissions,
+            }}
+            onBackToMode={() => setScreen("modeSelection")}
+            onChallengeReady={startLevelClock}
+            onNextLevel={startNextLevel}
+            onRetry={retryLevel}
+            onSubmitAnswer={submitChallengeAnswer}
+            onToggleInput={toggleInput}
+          />
+        </LazyScreenErrorBoundary>
+      </FocusAfterMount>
     </Suspense>
   );
 }
