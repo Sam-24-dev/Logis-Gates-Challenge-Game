@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 const levelScreenGate = vi.hoisted(() => {
@@ -45,9 +45,10 @@ it("starts the challenge clock when the level becomes interactive and samples el
   await act(async () => {
     levelScreenGate.open();
   });
-  expect(
-    await screen.findByRole("heading", { name: /reto 1: XOR bajo presión/i }),
-  ).toBeInTheDocument();
+  const heading = await screen.findByRole("heading", {
+    name: /reto 1: XOR bajo presión/i,
+  });
+  await waitFor(() => expect(heading).toHaveFocus());
 
   now = 11000;
   fireEvent.click(screen.getByRole("button", { name: /entrada a/i }));
