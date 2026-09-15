@@ -2696,6 +2696,10 @@
         both;
 }
 
+.level-submit-actions {
+    margin-top: var(--space-3);
+}
+
 .level-action-button {
     min-height: 3rem;
     padding: 0 1rem;

@@ -262,6 +262,21 @@ export function LevelScreen({
               Toca los nodos de entrada dentro del circuito para cambiar la
               señal.
             </p>
+            {isChallenge ? (
+              <section
+                className="level-actions level-submit-actions"
+                aria-label="Envío del reto"
+              >
+                <button
+                  className="level-action-button is-primary"
+                  type="button"
+                  disabled={challengeState?.submissionLocked ?? true}
+                  onClick={onSubmitAnswer}
+                >
+                  Enviar respuesta
+                </button>
+              </section>
+            ) : null}
           </section>
 
           <aside
@@ -384,16 +399,7 @@ export function LevelScreen({
             ) : null}
 
             <section className="level-actions" aria-label="Acciones del nivel">
-              {isChallenge ? (
-                <button
-                  className="level-action-button is-primary"
-                  type="button"
-                  disabled={challengeState?.submissionLocked ?? true}
-                  onClick={onSubmitAnswer}
-                >
-                  Enviar respuesta
-                </button>
-              ) : result ? (
+              {!isChallenge && result ? (
                 <button
                   className="level-action-button is-primary"
                   type="button"

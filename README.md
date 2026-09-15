@@ -5,7 +5,7 @@
 ![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=061018)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Vitest](https://img.shields.io/badge/Vitest-48%2F48_tests-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-49%2F49_tests-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-Production-000000?style=for-the-badge&logo=vercel&logoColor=white)
 ![Lighthouse accessibility audit](https://img.shields.io/badge/Lighthouse_Accessibility-100%2F100-success?style=for-the-badge)
 
@@ -91,7 +91,7 @@ npm audit --audit-level=high
 git --no-pager diff --check
 ```
 
-Current automated test baseline: **48/48 passing**.
+Current automated test baseline: **49/49 passing**.
 
 Manual checks include console, responsive widths (`320`, `375`, `768`, `1024`, `1365`, `1440`), keyboard/focus behavior, tap target size, sitemap XML, robots.txt, and Vercel headers.
 
