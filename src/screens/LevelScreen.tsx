@@ -367,6 +367,7 @@ export function LevelScreen({
                         <th key={input}>{input}</th>
                       ))}
                       <th>Salida</th>
+                      <th className="level-truth-status">Estado</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -374,6 +375,14 @@ export function LevelScreen({
                       const rowKey = getCurrentRowKey(level.inputs, row.inputs);
                       const isCurrent = rowKey === currentRowKey;
                       const isTarget = row.output;
+                      const rowStatus =
+                        isCurrent && isTarget
+                          ? "Actual y objetivo"
+                          : isCurrent
+                            ? "Actual"
+                            : isTarget
+                              ? "Objetivo"
+                              : null;
 
                       return (
                         <tr
@@ -386,14 +395,23 @@ export function LevelScreen({
                             </td>
                           ))}
                           <td>{formatValue(row.output)}</td>
+                          <td className="level-truth-status">
+                            {rowStatus ? (
+                              <span className="level-truth-marker">
+                                {rowStatus}
+                              </span>
+                            ) : (
+                              <span aria-hidden="true">—</span>
+                            )}
+                          </td>
                         </tr>
                       );
                     })}
                   </tbody>
                 </table>
                 <p className="level-hint-line">
-                  La fila azul es tu combinación actual. Las filas verdes
-                  producen salida 1.
+                  Estado: “Actual” indica tu combinación. “Objetivo” identifica
+                  las filas que producen salida 1.
                 </p>
               </section>
             ) : null}
