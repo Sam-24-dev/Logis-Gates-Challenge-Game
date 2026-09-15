@@ -2660,6 +2660,20 @@
     text-transform: uppercase;
 }
 
+.level-truth-status {
+    width: 1%;
+}
+
+.level-truth-marker {
+    display: inline-block;
+    padding: 0.2rem 0.38rem;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
 .level-truth-table tr.is-current td {
     color: var(--color-accent-strong);
     background: rgb(var(--color-accent-rgb) / 0.1);
