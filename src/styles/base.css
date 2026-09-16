@@ -2,6 +2,13 @@
     box-sizing: border-box;
 }
 
+:root {
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-right: env(safe-area-inset-right, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-left: env(safe-area-inset-left, 0px);
+}
+
 html {
     min-width: 0;
     min-height: 100%;
@@ -14,6 +21,7 @@ html {
 body {
     min-width: 0;
     min-height: 100vh;
+    min-height: 100dvh;
     margin: 0;
     overflow-x: hidden;
     color: var(--color-text);
@@ -93,10 +101,12 @@ h1[tabindex="-1"]:focus {
 
 .skip-link {
     position: fixed;
-    top: var(--space-3);
-    left: var(--space-3);
+    top: max(var(--space-3), var(--safe-area-top));
+    left: max(var(--space-3), var(--safe-area-left));
     z-index: 20;
-    transform: translateY(calc(-100% - var(--space-6)));
+    transform: translateY(
+        calc(-100% - var(--space-6) - var(--safe-area-top))
+    );
     border: 1px solid rgb(var(--color-warm-rgb) / 0.68);
     border-radius: 999px;
     min-height: 44px;
