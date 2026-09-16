@@ -51,8 +51,12 @@ describe("App progress storage", () => {
       }),
     );
 
-    expect(screen.getByText("Práctica 2/7")).toBeInTheDocument();
-    expect(screen.getByText("Reto 4/7")).toBeInTheDocument();
+    expect(
+      screen.getByRole("progressbar", { name: /progreso de práctica/i }),
+    ).toHaveAttribute("value", "2");
+    expect(
+      screen.getByRole("progressbar", { name: /progreso de reto/i }),
+    ).toHaveAttribute("value", "4");
     expect(screen.getByText(/mejor puntaje 3200/i)).toBeInTheDocument();
     expect(screen.getByText(/mejor racha x3/i)).toBeInTheDocument();
   });
