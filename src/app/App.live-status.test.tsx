@@ -35,12 +35,12 @@ describe("level live status", () => {
     const status = screen.getByRole("status");
 
     expect(status).toBeEmptyDOMElement();
-    expect(screen.getByText("?")).toBeInTheDocument();
+    expect(screen.getAllByText("?")).toHaveLength(2);
 
     fireEvent.click(inputA);
 
     expect(status).toBeEmptyDOMElement();
-    expect(screen.getByText("?")).toBeInTheDocument();
+    expect(screen.getAllByText("?")).toHaveLength(2);
 
     fireEvent.click(screen.getByRole("button", { name: /enviar respuesta/i }));
 

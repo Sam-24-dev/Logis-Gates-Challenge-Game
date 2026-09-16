@@ -98,6 +98,14 @@ export function LevelScreen({
   const isOutputRevealed =
     !isChallenge || Boolean(challengeState?.hasSubmittedCurrentLevel);
   const outputText = isOutputRevealed ? formatValue(result) : "?";
+  const inputSummary = level.inputs
+    .map((input) => `${input} ${formatValue(inputStates[input])}`)
+    .join(", ");
+  const liveStatus = isChallenge
+    ? challengeState?.lastWasCorrect === false
+      ? `Respuesta incorrecta. Salida ${outputText}. Racha rota. Revisa las entradas y vuelve a enviar.`
+      : ""
+    : `Entradas ${inputSummary}. Salida ${outputText}.`;
   const targetOutput = "1";
   const [pulse, setPulse] = useState<PulseKind | null>(null);
   const hasMounted = useRef(false);
@@ -283,13 +291,18 @@ export function LevelScreen({
             className="level-side"
             aria-label={isChallenge ? "Panel del reto" : "Ayuda del nivel"}
           >
-            <section
-              className="level-panel level-side-panel"
-              aria-live="polite"
-            >
+            <section className="level-panel level-side-panel">
               <h2 className="level-side-title">
                 {isChallenge ? "Panel de misión" : "Qué está pasando"}
               </h2>
+              <p
+                aria-atomic="true"
+                aria-live="polite"
+                className="level-live-status"
+                role="status"
+              >
+                {liveStatus}
+              </p>
               <div className="level-state-grid" aria-label="Estado actual">
                 {level.inputs.map((input) => (
                   <div className="level-mini-state" key={input}>
