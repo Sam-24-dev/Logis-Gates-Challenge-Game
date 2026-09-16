@@ -35,6 +35,9 @@ describe("safe-area layout", () => {
     expect(baseStyles).toMatch(
       /\.skip-link\s*\{[^}]*top:\s*max\([^;]*var\(--safe-area-top\)[^;]*\);[^}]*left:\s*max\([^;]*var\(--safe-area-left\)[^;]*\);/s,
     );
+    expect(baseStyles).toMatch(
+      /\.skip-link\s*\{[^}]*transform:\s*translateY\(\s*calc\(-100% - var\(--space-6\) - var\(--safe-area-top\)\)\s*\);/s,
+    );
   });
 
   it("keeps every full-screen surface inside the safe area", () => {
@@ -68,7 +71,7 @@ describe("safe-area layout", () => {
       /\.welcome-hero\s*\{[^}]*100dvh[^}]*var\(--safe-area-right\)[^}]*var\(--safe-area-bottom\)[^}]*var\(--safe-area-left\)/s,
     );
     expect(componentStyles).not.toMatch(
-      /@media[^{}]*\{[^{}]*\.(?:welcome-topbar|welcome-hero|mode-shell-inner|level-screen-shell|results-screen-shell)\s*\{[^}]*padding(?:-inline|-block)?:/s,
+      /@media[^{}]*\{[^{}]*\.(?:welcome-topbar|welcome-hero|mode-shell-inner|level-screen-shell|results-screen-shell)\s*\{[^}]*\spadding(?:-inline|-block)?\s*:/s,
     );
   });
 });

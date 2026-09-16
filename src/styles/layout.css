@@ -1,10 +1,16 @@
 .app-shell {
+    --app-shell-padding: clamp(var(--space-4), 4vw, var(--space-10));
+
     position: relative;
     isolation: isolate;
     min-height: 100vh;
+    min-height: 100dvh;
     display: grid;
     place-items: center;
-    padding: clamp(var(--space-4), 4vw, var(--space-10));
+    padding: max(var(--app-shell-padding), var(--safe-area-top))
+        max(var(--app-shell-padding), var(--safe-area-right))
+        max(var(--app-shell-padding), var(--safe-area-bottom))
+        max(var(--app-shell-padding), var(--safe-area-left));
 }
 
 .app-shell::before,
