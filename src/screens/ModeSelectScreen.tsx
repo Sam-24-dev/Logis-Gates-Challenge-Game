@@ -8,23 +8,6 @@ type ModeSelectScreenProps = {
   progress: StoredProgress;
 };
 
-const progressSteps = [
-  {
-    className: "is-done",
-    label: "Elegir modo",
-    text: "Define tu ruta",
-  },
-  {
-    className: "is-active",
-    label: "Práctica",
-    text: "7 compuertas guiadas",
-  },
-  {
-    className: "",
-    label: "Reto",
-    text: "7 circuitos con presión",
-  },
-];
 
 function PracticePreview() {
   return (
@@ -90,6 +73,30 @@ export function ModeSelectScreen({
   practiceTotalLevels,
   progress,
 }: ModeSelectScreenProps) {
+  const practiceCompletedLevels = Math.min(
+    Math.max(progress.practiceCompletedLevels, 0),
+    practiceTotalLevels,
+  );
+  const challengeCompletedLevels = Math.min(
+    Math.max(progress.challengeCompletedLevels, 0),
+    challengeTotalLevels,
+  );
+  const routes = [
+    {
+      completed: practiceCompletedLevels,
+      label: "Práctica",
+      total: practiceTotalLevels,
+    },
+    {
+      completed: challengeCompletedLevels,
+      label: "Reto",
+      total: challengeTotalLevels,
+    },
+  ];
+  const completedRoutes = routes.filter(
+    (route) => route.completed === route.total,
+  ).length;
+
   return (
     <main className="mode-shell" data-screen="mode-selection">
       <a className="skip-link" href="#mode-select-title">
@@ -128,40 +135,55 @@ export function ModeSelectScreen({
               reto de 7 circuitos con tiempo, puntos y racha.
             </p>
 
-            <div
+            <section
               className="mode-map"
               aria-label="Mapa de progreso del laboratorio"
             >
               <div className="mode-map-label">
-                <span>Progreso del laboratorio</span>
-                <span>1/3</span>
+                <span>Rutas completadas</span>
+                <span>{completedRoutes}/2</span>
               </div>
-              <ol className="mode-steps">
-                {progressSteps.map((step) => (
-                  <li className={step.className} key={step.label}>
-                    <strong>{step.label}</strong>
-                    <span>{step.text}</span>
-                  </li>
-                ))}
-              </ol>
-              <div className="mode-save-card" aria-label="Tu avance">
-                <p>Tu avance</p>
-                <div>
-                  <strong>
-                    Práctica {progress.practiceCompletedLevels}/
-                    {practiceTotalLevels}
-                  </strong>
-                  <strong>
-                    Reto {progress.challengeCompletedLevels}/
-                    {challengeTotalLevels}
-                  </strong>
-                </div>
+              <ul className="mode-routes">
+                {routes.map((route) => {
+                  const isDone = route.completed === route.total;
+                  const isActive = route.completed > 0 && !isDone;
+                  const status = isDone
+                    ? "Completada"
+                    : isActive
+                      ? "En progreso"
+                      : "Sin iniciar";
+
+                  return (
+                    <li
+                      className={isDone ? "is-done" : isActive ? "is-active" : ""}
+                      key={route.label}
+                    >
+                      <div className="mode-route-heading">
+                        <strong>{route.label}</strong>
+                        <span>
+                          {route.completed}/{route.total}
+                        </span>
+                      </div>
+                      <progress
+                        aria-label={`Progreso de ${route.label.toLowerCase()}`}
+                        max={route.total}
+                        value={route.completed}
+                      >
+                        {route.completed} de {route.total}
+                      </progress>
+                      <span className="mode-route-status">{status}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+              <div className="mode-save-card" aria-label="Tus récords">
+                <p>Tus récords</p>
                 <div>
                   <span>Mejor puntaje {progress.bestChallengeScore}</span>
                   <span>Mejor racha x{progress.bestChallengeStreak}</span>
                 </div>
               </div>
-            </div>
+            </section>
           </div>
 
           <div className="mode-stage">

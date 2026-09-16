@@ -72,9 +72,14 @@ describe("App", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /empezar/i }));
 
-    expect(screen.getByText(/tu avance/i)).toBeInTheDocument();
-    expect(screen.getByText("Práctica 7/7")).toBeInTheDocument();
-    expect(screen.getByText("Reto 4/7")).toBeInTheDocument();
+    expect(screen.getByText("1/2")).toBeInTheDocument();
+    expect(
+      screen.getByRole("progressbar", { name: /progreso de práctica/i }),
+    ).toHaveAttribute("value", "7");
+    expect(
+      screen.getByRole("progressbar", { name: /progreso de reto/i }),
+    ).toHaveAttribute("value", "4");
+    expect(screen.getByText(/tus récords/i)).toBeInTheDocument();
     expect(screen.getByText(/mejor puntaje 4321/i)).toBeInTheDocument();
     expect(screen.getByText(/mejor racha x3/i)).toBeInTheDocument();
     expect(screen.queryByText(/registro local/i)).not.toBeInTheDocument();
