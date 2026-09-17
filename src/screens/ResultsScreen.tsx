@@ -75,6 +75,78 @@ export function ResultsScreen({
   const learnedGates = getUniqueGates(completedLevels);
   const totalLevels = completedLevels.length;
 
+  if (totalLevels === 0) {
+    return (
+      <main className="results-screen-shell" data-screen="results">
+        <a className="skip-link" href="#results-title">
+          Saltar al contenido principal
+        </a>
+        <div className="results-screen">
+          <header
+            className="results-topbar"
+            aria-label="Barra superior de resultados"
+          >
+            <div className="results-brand">Lógica Digital</div>
+            <div className="results-top-actions">
+              <div className="results-pill">Sin resultados</div>
+              <button
+                className="results-ghost-button"
+                type="button"
+                onClick={onHome}
+              >
+                Volver al inicio
+              </button>
+            </div>
+          </header>
+
+          <section
+            className="results-panel results-hero"
+            aria-labelledby="results-title"
+          >
+            <div>
+              <p className="results-eyebrow">Estado de recuperación</p>
+              <h1 id="results-title" className="results-title" tabIndex={-1}>
+                Resultados{" "}
+                <span className="results-title-accent">no disponibles</span>
+              </h1>
+              <p className="results-lead">
+                No encontramos resultados válidos para mostrar. Inicia una
+                nueva práctica o vuelve al inicio para continuar.
+              </p>
+            </div>
+
+            <div
+              className="results-actions"
+              aria-label="Acciones de resultado"
+            >
+              <button
+                className="results-button is-primary"
+                type="button"
+                onClick={onChallenge}
+              >
+                Iniciar reto
+              </button>
+              <button
+                className="results-button"
+                type="button"
+                onClick={onPracticeAgain}
+              >
+                Practicar otra vez
+              </button>
+              <button
+                className="results-button"
+                type="button"
+                onClick={onHome}
+              >
+                Volver al inicio
+              </button>
+            </div>
+          </section>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="results-screen-shell" data-screen="results">
       <a className="skip-link" href="#results-title">
