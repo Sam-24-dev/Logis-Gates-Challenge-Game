@@ -516,11 +516,14 @@
     display: flex;
     justify-content: center;
     gap: clamp(var(--space-5), 4vw, 3.5rem);
+    margin: 0;
+    padding: 0;
     color: var(--color-muted);
     font-size: 0.72rem;
+    list-style: none;
 }
 
-.welcome-nav span[aria-current="page"] {
+.welcome-nav li[aria-current="step"] {
     color: var(--color-accent-strong);
 }
 
@@ -1294,12 +1297,15 @@
 .mode-nav {
     display: flex;
     gap: clamp(var(--space-5), 4vw, 3rem);
+    margin: 0;
+    padding: 0;
     color: var(--color-dim);
     font-size: 0.72rem;
     letter-spacing: 0.14em;
+    list-style: none;
 }
 
-.mode-nav span[aria-current="page"] {
+.mode-nav li[aria-current="step"] {
     color: var(--color-accent-strong);
 }
 

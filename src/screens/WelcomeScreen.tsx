@@ -11,17 +11,17 @@ export function WelcomeScreen({ onDemo, onStart }: WelcomeScreenProps) {
       <a className="skip-link" href="#welcome-title">
         Saltar al contenido principal
       </a>
-      <header className="welcome-topbar" aria-label="Navegación principal">
+      <header className="welcome-topbar">
         <div className="welcome-brand" aria-label="Lógica Digital">
           <span className="welcome-brand-copy">
             <strong>Lógica Digital</strong>
           </span>
         </div>
-        <nav className="welcome-nav" aria-label="Módulos de la experiencia">
-          <span aria-current="page">Inicio</span>
-          <span>Circuitos</span>
-          <span>Práctica</span>
-        </nav>
+        <ol className="welcome-nav" aria-label="Etapas de la experiencia">
+          <li aria-current="step">Inicio</li>
+          <li>Circuitos</li>
+          <li>Práctica</li>
+        </ol>
         <div className="welcome-hud" aria-hidden="true">
           <span className="welcome-hud-led" />
           <span>Listo para aprender</span>

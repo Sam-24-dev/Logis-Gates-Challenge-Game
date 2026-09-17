@@ -103,16 +103,13 @@ export function ModeSelectScreen({
         Saltar al contenido principal
       </a>
       <div className="mode-shell-inner">
-        <header
-          className="mode-topbar"
-          aria-label="Navegación de selección de modo"
-        >
+        <header className="mode-topbar">
           <div className="mode-brand">Lógica Digital</div>
-          <nav className="mode-nav" aria-label="Mapa de la experiencia">
-            <span aria-current="page">Modo</span>
-            <span>Compuertas</span>
-            <span>Reto</span>
-          </nav>
+          <ol className="mode-nav" aria-label="Etapas del laboratorio">
+            <li aria-current="step">Modo</li>
+            <li>Compuertas</li>
+            <li>Reto</li>
+          </ol>
           <div className="mode-hud" aria-hidden="true">
             <span />
             Ruta de compuertas lista
