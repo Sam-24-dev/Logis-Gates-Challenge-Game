@@ -91,7 +91,7 @@ npm audit --audit-level=high
 git --no-pager diff --check
 ```
 
-Current automated test baseline: **62/62 passing**.
+Current automated test baseline: **64/64 passing**.
 
 Manual checks include console, responsive widths (`320`, `375`, `768`, `1024`, `1365`, `1440`), keyboard/focus behavior, tap target size, sitemap XML, robots.txt, and Vercel headers.
 
