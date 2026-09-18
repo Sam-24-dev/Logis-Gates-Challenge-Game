@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { defaultProgress } from "../core/progress";
+import { levelsByDifficulty } from "../data/levels";
 import { ResultsScreen } from "./ResultsScreen";
 
 describe("ResultsScreen", () => {
@@ -36,6 +37,32 @@ describe("ResultsScreen", () => {
     ).not.toBeInTheDocument();
     expect(
       screen.queryByRole("heading", { name: /laboratorio completado/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("labels the hard-mode educational summary as a challenge", () => {
+    render(
+      <ResultsScreen
+        challengeSummary={{ score: 420, streak: 2 }}
+        completedDifficulty="hard"
+        completedLevels={Object.values(levelsByDifficulty.hard)}
+        isNewBestChallengeScore={false}
+        onChallenge={vi.fn()}
+        onHome={vi.fn()}
+        onPracticeAgain={vi.fn()}
+        progress={defaultProgress}
+      />,
+    );
+
+    expect(
+      screen.getByRole("complementary", {
+        name: "Resumen educativo del reto",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("complementary", {
+        name: "Resumen educativo de la práctica",
+      }),
     ).not.toBeInTheDocument();
   });
 });
