@@ -315,25 +315,30 @@ export function ResultsScreen({
             </div>
 
             <div className="results-learned">
-              <h2>Lo que ya dominas</h2>
-              {learnedGates.map((gate) => (
-                <div className="results-row" key={gate}>
-                  <b className="results-gate">{gate}</b>
-                  <p>{gateSummaries[gate]}</p>
-                  <span className="results-status">Listo</span>
-                </div>
-              ))}
-              <div
+              <h2 id="results-learned-title">Lo que ya dominas</h2>
+              <ul
+                className="results-learned-list"
+                aria-labelledby="results-learned-title"
+              >
+                {learnedGates.map((gate) => (
+                  <li className="results-row" key={gate}>
+                    <b className="results-gate">{gate}</b>
+                    <p>{gateSummaries[gate]}</p>
+                    <span className="results-status">Listo</span>
+                  </li>
+                ))}
+              </ul>
+              <ol
                 className="results-timeline"
                 aria-label="Niveles completados"
               >
                 {completedLevels.map((level) => (
-                  <div className="results-step" key={level.id}>
+                  <li className="results-step" key={level.id}>
                     {String(level.levelNumber).padStart(2, "0")}
                     <span>{level.gates.join(" · ")}</span>
-                  </div>
+                  </li>
                 ))}
-              </div>
+              </ol>
             </div>
           </aside>
         </div>

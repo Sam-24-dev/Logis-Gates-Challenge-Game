@@ -3506,6 +3506,14 @@
     letter-spacing: -0.05em;
 }
 
+.results-learned-list {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
 .results-row {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -3547,7 +3555,9 @@
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.56rem;
-    margin-top: var(--space-2);
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    list-style: none;
 }
 
 .results-step {
