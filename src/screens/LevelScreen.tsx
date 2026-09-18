@@ -335,9 +335,6 @@ export function LevelScreen({
                       <strong>Racha rota:</strong> la salida enviada no cumple el
                       objetivo. Cambia una entrada, revisa qué rama bloquea la
                       señal y vuelve a enviar.
-                      <span className="level-pulse-status">
-                        Pulso de corrección activo
-                      </span>
                     </div>
                   ) : null}
                 </>

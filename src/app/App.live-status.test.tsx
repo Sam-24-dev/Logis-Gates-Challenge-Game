@@ -50,5 +50,8 @@ describe("level live status", () => {
     expect(status).not.toHaveTextContent(
       /reto activo|pulso de corrección activo|rama bloquea/i,
     );
+    expect(
+      screen.queryByText(/pulso de corrección activo/i),
+    ).not.toBeInTheDocument();
   });
 });
