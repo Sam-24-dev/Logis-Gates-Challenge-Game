@@ -2718,16 +2718,6 @@
         both;
 }
 
-.level-pulse-status {
-    display: block;
-    margin-top: 0.42rem;
-    color: #ffb9c5;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
 
 .level-hint-line.is-challenge {
     padding: 0.75rem;

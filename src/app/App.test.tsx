@@ -136,7 +136,6 @@ describe("App", () => {
       await screen.findByRole("button", { name: /enviar respuesta/i }),
     );
 
-    expect(screen.getByText(/pulso de corrección activo/i)).toBeInTheDocument();
     expect(
       screen.getByText(/revisa qué rama bloquea la señal/i),
     ).toBeInTheDocument();
