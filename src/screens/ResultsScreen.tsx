@@ -274,7 +274,11 @@ export function ResultsScreen({
 
           <aside
             className="results-panel results-lab-card"
-            aria-label="Resumen educativo de la práctica"
+            aria-label={
+              completedDifficulty === "hard"
+                ? "Resumen educativo del reto"
+                : "Resumen educativo de la práctica"
+            }
           >
             <div className="results-badge">Señales estabilizadas</div>
 
