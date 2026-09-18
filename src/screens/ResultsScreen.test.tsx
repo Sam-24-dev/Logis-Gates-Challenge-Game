@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { defaultProgress } from "../core/progress";
 import { levelsByDifficulty } from "../data/levels";
@@ -64,5 +64,33 @@ describe("ResultsScreen", () => {
         name: "Resumen educativo de la práctica",
       }),
     ).not.toBeInTheDocument();
+  });
+
+  it("exposes mastered gates and completed levels as lists", () => {
+    render(
+      <ResultsScreen
+        challengeSummary={{ score: 420, streak: 2 }}
+        completedDifficulty="hard"
+        completedLevels={Object.values(levelsByDifficulty.hard)}
+        isNewBestChallengeScore={false}
+        onChallenge={vi.fn()}
+        onHome={vi.fn()}
+        onPracticeAgain={vi.fn()}
+        progress={defaultProgress}
+      />,
+    );
+
+    const summary = screen.getByRole("complementary", {
+      name: "Resumen educativo del reto",
+    });
+    const masteredGates = within(summary).getByRole("list", {
+      name: "Lo que ya dominas",
+    });
+    const completedLevels = within(summary).getByRole("list", {
+      name: "Niveles completados",
+    });
+
+    expect(within(masteredGates).getAllByRole("listitem")).toHaveLength(7);
+    expect(within(completedLevels).getAllByRole("listitem")).toHaveLength(7);
   });
 });
