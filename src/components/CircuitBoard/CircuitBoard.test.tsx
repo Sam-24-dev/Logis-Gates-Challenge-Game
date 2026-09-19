@@ -53,6 +53,38 @@ describe("CircuitBoard", () => {
     expect(onToggleInput.mock.calls).toEqual([["A"], ["C"]]);
   });
 
+  it("connects the root AND output to the LED without reversing", () => {
+    const { container } = render(
+      <CircuitBoard
+        heading="Reto 5"
+        inputStates={{ A: true, B: false, C: false, D: false }}
+        level={levelsByDifficulty.hard[5]}
+        pulse={null}
+        result={false}
+        revealOutput={false}
+        onToggleInput={vi.fn()}
+      />,
+    );
+
+    const rootOutputWire = [
+      ...container.querySelectorAll<SVGPathElement>(".level-wire-base"),
+    ].at(-1);
+    const coordinates = rootOutputWire
+      ?.getAttribute("d")
+      ?.match(
+        /^M(?<originX>\d+(?:\.\d+)?) [\d.]+ H(?<destinationX>\d+(?:\.\d+)?)$/,
+      );
+
+    expect(coordinates?.groups).toBeDefined();
+
+    const originX = Number(coordinates?.groups?.originX);
+    const destinationX = Number(coordinates?.groups?.destinationX);
+
+    expect(originX).toBe(740);
+    expect(destinationX).toBe(744);
+    expect(originX).toBeLessThanOrEqual(destinationX);
+  });
+
   it("describes challenge topology in signal-flow order", () => {
     render(
       <CircuitBoard
