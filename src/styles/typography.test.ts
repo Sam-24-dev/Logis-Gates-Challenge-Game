@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 
+// @ts-expect-error -- Vitest runs in Node, but this browser app omits Node types.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import rawTokensCss from "./tokens.css?raw";
