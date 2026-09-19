@@ -234,6 +234,10 @@ function getGateOutputX(gate: GateName, x: number) {
     return x + 164;
   }
 
+  if (gate === "AND") {
+    return x + 132;
+  }
+
   return x + 150;
 }
 
