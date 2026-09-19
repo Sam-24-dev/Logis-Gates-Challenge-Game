@@ -16,6 +16,7 @@
 
 :root {
     color-scheme: dark;
+    font-synthesis: none;
 
     --font-display: "Oxanium", "Segoe UI", sans-serif;
     --font-mono: "Share Tech Mono", "Cascadia Mono", monospace;
