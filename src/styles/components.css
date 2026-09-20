@@ -3001,6 +3001,20 @@
         min-height: 17.5rem;
     }
 
+    .level-gate-text,
+    .level-node-value,
+    .level-output-text {
+        font-size: 2.25rem;
+    }
+
+    .level-node-value + .level-svg-small {
+        font-size: 1.25rem;
+    }
+
+    .level-output-text + .level-svg-small {
+        display: none;
+    }
+
     .level-challenge-hud,
     .level-side,
     .level-actions {
