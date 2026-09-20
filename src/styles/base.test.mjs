@@ -17,6 +17,29 @@ describe("base focus styles", () => {
   });
 });
 
+describe("circuit board mobile typography", () => {
+  it("keeps essential SVG labels legible inside the phone breakpoint", () => {
+    const mobileStyles = componentStyles
+      .replace(/\r\n/g, "\n")
+      .match(
+        /@media \(max-width: 42\.5rem\) \{(?<rules>[\s\S]*?)\n\}\n\n@media \(max-width: 22\.5rem\)/,
+      )?.groups?.rules;
+
+    expect(mobileStyles).toBeDefined();
+    expect(mobileStyles).toContain(`    .level-gate-text,
+    .level-node-value,
+    .level-output-text {
+        font-size: 2.25rem;
+    }`);
+    expect(mobileStyles).toContain(`    .level-node-value + .level-svg-small {
+        font-size: 1.25rem;
+    }`);
+    expect(mobileStyles).toContain(`    .level-output-text + .level-svg-small {
+        display: none;
+    }`);
+  });
+});
+
 describe("safe-area layout", () => {
   it("opts into edge-to-edge layout with fallback-safe viewport values", () => {
     expect(indexMarkup).toMatch(
