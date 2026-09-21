@@ -100,10 +100,6 @@ function SignalWire({ d, isActive, variant = "default" }: SignalWireProps) {
         className={`level-wire-signal ${isActive ? "is-on" : ""} ${variant === "warm" ? "is-warm" : ""}`}
         d={d}
       />
-      <path
-        className={`level-wire-packet ${isActive ? "is-on" : ""} ${variant === "warm" ? "is-warm" : ""}`}
-        d={d}
-      />
       <path className={`level-wire-off ${isActive ? "is-hidden" : ""}`} d={d} />
     </>
   );
