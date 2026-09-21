@@ -40,6 +40,28 @@ describe("circuit board mobile typography", () => {
   });
 });
 
+describe("circuit wire motion", () => {
+  it("runs one finite signal animation without a packet layer", () => {
+    const normalizedStyles = componentStyles.replace(/\r\n/g, "\n");
+    const signalRule = normalizedStyles.match(
+      /\.level-wire-signal\.is-on\s*\{(?<rules>[^}]*)\}/,
+    )?.groups?.rules;
+    const reducedMotionStyles = normalizedStyles.match(
+      /@media \(prefers-reduced-motion: reduce\) \{(?<rules>[\s\S]*?)\n\}\n\n\/\* ResultsScreen \*\//,
+    )?.groups?.rules;
+
+    expect(signalRule).toBeDefined();
+    expect(signalRule).toContain(
+      "animation: level-signal-flow 1.35s linear;",
+    );
+    expect(signalRule).not.toContain("infinite");
+    expect(normalizedStyles).not.toContain(".level-wire-packet");
+    expect(normalizedStyles).not.toContain("@keyframes level-signal-packet");
+    expect(reducedMotionStyles).toBeDefined();
+    expect(reducedMotionStyles).not.toContain(".level-wire-packet.is-on");
+  });
+});
+
 describe("safe-area layout", () => {
   it("opts into edge-to-edge layout with fallback-safe viewport values", () => {
     expect(indexMarkup).toMatch(

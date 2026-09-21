@@ -53,6 +53,33 @@ describe("CircuitBoard", () => {
     expect(onToggleInput.mock.calls).toEqual([["A"], ["C"]]);
   });
 
+  it("renders one finite signal layer for each challenge wire", () => {
+    const { container } = render(
+      <CircuitBoard
+        heading="Reto 7"
+        inputStates={{ A: true, B: true, C: true, D: true }}
+        level={levelsByDifficulty.hard[7]}
+        pulse={null}
+        result={true}
+        revealOutput={true}
+        onToggleInput={vi.fn()}
+      />,
+    );
+
+    const wireSelector = [
+      ".level-wire-base",
+      ".level-wire-signal",
+      ".level-wire-packet",
+      ".level-wire-off",
+    ].join(", ");
+
+    expect(container.querySelectorAll(".level-wire-base")).toHaveLength(7);
+    expect(container.querySelectorAll(".level-wire-signal")).toHaveLength(7);
+    expect(container.querySelectorAll(".level-wire-off")).toHaveLength(7);
+    expect(container.querySelectorAll(".level-wire-packet")).toHaveLength(0);
+    expect(container.querySelectorAll(wireSelector)).toHaveLength(21);
+  });
+
   it("connects the root AND output to the LED without reversing", () => {
     const { container } = render(
       <CircuitBoard

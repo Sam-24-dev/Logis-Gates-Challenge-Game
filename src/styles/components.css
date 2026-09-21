@@ -2377,33 +2377,12 @@
 
 .level-wire-signal.is-on {
     opacity: 1;
-    animation: level-signal-flow 1.35s linear infinite;
+    animation: level-signal-flow 1.35s linear;
 }
 
 .level-wire-signal.is-warm {
     stroke: var(--color-warm);
     filter: drop-shadow(0 0 0.45rem rgb(255 209 102 / 0.42));
-}
-
-.level-wire-packet {
-    fill: none;
-    opacity: 0;
-    stroke: #eaffff;
-    stroke-dasharray: 1 72;
-    stroke-dashoffset: 0;
-    stroke-linecap: round;
-    stroke-width: 8;
-}
-
-.level-wire-packet.is-on {
-    opacity: 0.95;
-    animation: level-signal-packet 1.05s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-    filter: drop-shadow(0 0 0.55rem rgb(var(--color-accent-rgb) / 0.62));
-}
-
-.level-wire-packet.is-warm {
-    stroke: #fff0ad;
-    filter: drop-shadow(0 0 0.55rem rgb(255 209 102 / 0.58));
 }
 
 .level-wire-off {
@@ -2842,12 +2821,6 @@
     }
 }
 
-@keyframes level-signal-packet {
-    to {
-        stroke-dashoffset: -73;
-    }
-}
-
 @keyframes level-board-scan {
     0% {
         opacity: 0;
@@ -3059,7 +3032,6 @@
 
 @media (prefers-reduced-motion: reduce) {
     .level-wire-signal.is-on,
-    .level-wire-packet.is-on,
     .level-board.is-miss-pulse::after,
     .level-board.is-success-pulse::after,
     .level-next-step.is-danger {
