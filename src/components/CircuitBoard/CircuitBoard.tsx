@@ -158,6 +158,10 @@ function OutputNode({ isActive, isRevealed, x, y }: OutputNodeProps) {
   );
 }
 
+function assertNeverGate(gate: never): never {
+  throw new Error(`Unsupported gate: ${String(gate)}`);
+}
+
 function GateNode({ gate, isActive, x, y }: GateNodeProps) {
   const shellClass = `level-gate-shell ${isActive ? "is-complete" : ""}`;
 
@@ -205,20 +209,24 @@ function GateNode({ gate, isActive, x, y }: GateNodeProps) {
     );
   }
 
-  return (
-    <g transform={`translate(${x} ${y})`}>
-      <path className={shellClass} d="M0 0L128 60L0 120Z" />
-      <circle className="level-gate-bubble" cx="148" cy="60" r="13" />
-      <text
-        className="level-svg-label level-gate-text"
-        x="54"
-        y="69"
-        textAnchor="middle"
-      >
-        NOT
-      </text>
-    </g>
-  );
+  if (gate === "NOT") {
+    return (
+      <g transform={`translate(${x} ${y})`}>
+        <path className={shellClass} d="M0 0L128 60L0 120Z" />
+        <circle className="level-gate-bubble" cx="148" cy="60" r="13" />
+        <text
+          className="level-svg-label level-gate-text"
+          x="54"
+          y="69"
+          textAnchor="middle"
+        >
+          NOT
+        </text>
+      </g>
+    );
+  }
+
+  return assertNeverGate(gate);
 }
 
 function getGateOutputX(gate: GateName, x: number) {
@@ -234,7 +242,11 @@ function getGateOutputX(gate: GateName, x: number) {
     return x + 132;
   }
 
-  return x + 150;
+  if (gate === "OR" || gate === "XOR") {
+    return x + 150;
+  }
+
+  return assertNeverGate(gate);
 }
 
 function renderPracticeBoard(
