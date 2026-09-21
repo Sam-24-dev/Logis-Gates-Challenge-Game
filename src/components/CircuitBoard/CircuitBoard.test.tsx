@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import type { LevelDefinition } from "../../core/gameTypes";
+import type { GateName, LevelDefinition } from "../../core/gameTypes";
 import { levelsByDifficulty } from "../../data/levels";
 import { CircuitBoard } from "./CircuitBoard";
 
@@ -33,7 +33,42 @@ const repeatedAndLevel = {
   feedbackIncorrect: "Revisa las dos etapas AND.",
 } satisfies LevelDefinition;
 
+const unsupportedGate = "BUFFER" as GateName;
+
+const unsupportedGateLevel = {
+  id: "easy-8",
+  difficulty: "easy",
+  levelNumber: 8,
+  title: "Práctica sintética - BUFFER",
+  inputs: ["A"],
+  gates: [unsupportedGate],
+  circuit: {
+    inputs: ["A"],
+    output: {
+      type: "gate",
+      gate: unsupportedGate,
+      inputs: [{ type: "input", name: "A" }],
+    },
+  },
+  feedbackCorrect: "La compuerta transmite la entrada.",
+  feedbackIncorrect: "Revisa la entrada.",
+} satisfies LevelDefinition;
+
 describe("CircuitBoard", () => {
+  it("rejects unsupported runtime gate values", () => {
+    expect(() =>
+      render(
+        <CircuitBoard
+          heading="Práctica sintética"
+          inputStates={{ A: false }}
+          level={unsupportedGateLevel}
+          pulse={null}
+          result={false}
+          onToggleInput={vi.fn()}
+        />,
+      ),
+    ).toThrow(/unsupported gate.*buffer/i);
+  });
   it("renders repeated gates from circuit topology instead of gate metadata", () => {
     const { container } = render(
       <CircuitBoard
