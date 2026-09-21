@@ -1,9 +1,104 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import type { LevelDefinition } from "../../core/gameTypes";
 import { levelsByDifficulty } from "../../data/levels";
 import { CircuitBoard } from "./CircuitBoard";
 
+const repeatedAndLevel = {
+  id: "hard-8",
+  difficulty: "hard",
+  levelNumber: 8,
+  title: "Reto sintético - AND",
+  inputs: ["A", "B", "C"],
+  gates: ["AND"],
+  circuit: {
+    inputs: ["A", "B", "C"],
+    output: {
+      type: "gate",
+      gate: "AND",
+      inputs: [
+        {
+          type: "gate",
+          gate: "AND",
+          inputs: [
+            { type: "input", name: "A" },
+            { type: "input", name: "B" },
+          ],
+        },
+        { type: "input", name: "C" },
+      ],
+    },
+  },
+  feedbackCorrect: "Las dos compuertas AND están activas.",
+  feedbackIncorrect: "Revisa las dos etapas AND.",
+} satisfies LevelDefinition;
+
 describe("CircuitBoard", () => {
+  it("renders repeated gates from circuit topology instead of gate metadata", () => {
+    const { container } = render(
+      <CircuitBoard
+        heading="Reto sintético"
+        inputStates={{ A: true, B: true, C: true }}
+        level={repeatedAndLevel}
+        pulse={null}
+        result={true}
+        revealOutput={true}
+        onToggleInput={vi.fn()}
+      />,
+    );
+
+    const gateLabels = [
+      ...container.querySelectorAll<SVGTextElement>(".level-gate-text"),
+    ].map((gate) => gate.textContent);
+    const pathData = [
+      ...container.querySelectorAll<SVGPathElement>("path[d]"),
+    ].map((path) => path.getAttribute("d") ?? "");
+
+    expect.soft(gateLabels).toHaveLength(2);
+    expect.soft(gateLabels).toEqual(["AND", "AND"]);
+    expect
+      .soft(container.querySelectorAll(".level-wire-base"))
+      .toHaveLength(5);
+    expect.soft(pathData.some((path) => path.includes("undefined"))).toBe(false);
+    expect.soft(pathData.some((path) => path.includes("NaN"))).toBe(false);
+  });
+
+  it("routes repeated-gate hotspots from the visual circuit topology", () => {
+    const onToggleInput = vi.fn();
+    const boardWidth = 257.1875;
+    const boardHeight = (boardWidth * 480) / 860;
+    render(
+      <CircuitBoard
+        heading="Reto sintético"
+        inputStates={{ A: false, B: false, C: false }}
+        level={repeatedAndLevel}
+        pulse={null}
+        result={false}
+        revealOutput={false}
+        onToggleInput={onToggleInput}
+      />,
+    );
+
+    const controls = screen.getByRole("group", {
+      name: "Controles del circuito",
+    });
+    vi.spyOn(controls, "getBoundingClientRect").mockReturnValue({
+      left: 0,
+      top: 0,
+      width: boardWidth,
+      height: boardHeight,
+    } as DOMRect);
+
+    fireEvent.click(screen.getByRole("button", { name: /nodo de entrada c/i }), {
+      clientX: (88 / 860) * boardWidth,
+      clientY: (376 / 480) * boardHeight,
+      detail: 1,
+    });
+
+    expect(onToggleInput).toHaveBeenCalledTimes(1);
+    expect(onToggleInput).toHaveBeenCalledWith("C");
+  });
+
   it("routes overlapping pointer clicks to the nearest visual input", () => {
     const onToggleInput = vi.fn();
     const boardWidth = 257.1875;
