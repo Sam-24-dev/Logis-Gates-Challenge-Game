@@ -1,6 +1,10 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import type { GateName, LevelDefinition } from "../../core/gameTypes";
+import type {
+  GateName,
+  InputName,
+  LevelDefinition,
+} from "../../core/gameTypes";
 import { levelsByDifficulty } from "../../data/levels";
 import { CircuitBoard } from "./CircuitBoard";
 
@@ -54,6 +58,96 @@ const unsupportedGateLevel = {
   feedbackIncorrect: "Revisa la entrada.",
 } satisfies LevelDefinition;
 
+const excessiveGateSourcesLevel = {
+  id: "easy-9",
+  difficulty: "easy",
+  levelNumber: 9,
+  title: "Práctica sintética - AND de tres entradas",
+  inputs: ["A", "B", "C"],
+  gates: ["AND"],
+  circuit: {
+    inputs: ["A", "B", "C"],
+    output: {
+      type: "gate",
+      gate: "AND",
+      inputs: [
+        { type: "input", name: "A" },
+        { type: "input", name: "B" },
+        { type: "input", name: "C" },
+      ],
+    },
+  },
+  feedbackCorrect: "Las tres entradas están activas.",
+  feedbackIncorrect: "Revisa las tres entradas.",
+} satisfies LevelDefinition;
+
+const inputE = "E" as InputName;
+
+const excessiveDeclaredInputsLevel = {
+  id: "easy-10",
+  difficulty: "easy",
+  levelNumber: 10,
+  title: "Práctica sintética - cinco entradas",
+  inputs: ["A", "B", "C", "D", inputE],
+  gates: ["AND"],
+  circuit: {
+    inputs: ["A", "B", "C", "D", inputE],
+    output: {
+      type: "gate",
+      gate: "AND",
+      inputs: [
+        { type: "input", name: "A" },
+        { type: "input", name: "B" },
+      ],
+    },
+  },
+  feedbackCorrect: "Las entradas A y B están activas.",
+  feedbackIncorrect: "Revisa las entradas A y B.",
+} satisfies LevelDefinition;
+
+const excessiveTopologyDepthLevel = {
+  id: "hard-9",
+  difficulty: "hard",
+  levelNumber: 9,
+  title: "Reto sintético - profundidad cuatro",
+  inputs: ["A", "B", "C", "D"],
+  gates: ["AND"],
+  circuit: {
+    inputs: ["A", "B", "C", "D"],
+    output: {
+      type: "gate",
+      gate: "AND",
+      inputs: [
+        {
+          type: "gate",
+          gate: "AND",
+          inputs: [
+            {
+              type: "gate",
+              gate: "AND",
+              inputs: [
+                {
+                  type: "gate",
+                  gate: "AND",
+                  inputs: [
+                    { type: "input", name: "A" },
+                    { type: "input", name: "B" },
+                  ],
+                },
+                { type: "input", name: "C" },
+              ],
+            },
+            { type: "input", name: "D" },
+          ],
+        },
+        { type: "input", name: "A" },
+      ],
+    },
+  },
+  feedbackCorrect: "La cadena AND está activa.",
+  feedbackIncorrect: "Revisa la cadena AND.",
+} satisfies LevelDefinition;
+
 describe("CircuitBoard", () => {
   it("rejects unsupported runtime gate values", () => {
     expect(() =>
@@ -68,6 +162,56 @@ describe("CircuitBoard", () => {
         />,
       ),
     ).toThrow(/unsupported gate.*buffer/i);
+  });
+
+  it("rejects gates beyond the supported source capacity", () => {
+    expect(() =>
+      render(
+        <CircuitBoard
+          heading="Práctica sintética"
+          inputStates={{ A: false, B: false, C: false }}
+          level={excessiveGateSourcesLevel}
+          pulse={null}
+          result={false}
+          onToggleInput={vi.fn()}
+        />,
+      ),
+    ).toThrow(
+      /circuit layout supports at most 2 sources per gate; AND received 3\./i,
+    );
+  });
+
+  it("rejects levels beyond the supported declared-input capacity", () => {
+    expect(() =>
+      render(
+        <CircuitBoard
+          heading="Práctica sintética"
+          inputStates={{ A: false, B: false, C: false, D: false }}
+          level={excessiveDeclaredInputsLevel}
+          pulse={null}
+          result={false}
+          onToggleInput={vi.fn()}
+        />,
+      ),
+    ).toThrow(/circuit layout supports at most 4 inputs; received 5\./i);
+  });
+
+  it("rejects circuits beyond the supported topology depth", () => {
+    expect(() =>
+      render(
+        <CircuitBoard
+          heading="Reto sintético"
+          inputStates={{ A: false, B: false, C: false, D: false }}
+          level={excessiveTopologyDepthLevel}
+          pulse={null}
+          result={false}
+          revealOutput={false}
+          onToggleInput={vi.fn()}
+        />,
+      ),
+    ).toThrow(
+      /circuit layout supports a maximum depth of 3; received 4\./i,
+    );
   });
   it("renders repeated gates from circuit topology instead of gate metadata", () => {
     const { container } = render(

@@ -47,6 +47,9 @@ type OutputNodeProps = {
 
 const twoInputYPositions = [170, 270];
 const oneInputYPositions = [220];
+const MAX_LAYOUT_INPUTS = 4;
+const MAX_LAYOUT_DEPTH = 3;
+const MAX_GATE_INPUTS = 2;
 
 const inputYPositionsByCount: Record<number, number[]> = {
   1: [220],
@@ -302,6 +305,37 @@ function getGateDepth(node: CircuitNode): number {
   return 1 + Math.max(...node.inputs.map(getGateDepth));
 }
 
+function assertSupportedCircuitLayout(level: LevelDefinition) {
+  if (level.inputs.length > MAX_LAYOUT_INPUTS) {
+    throw new Error(
+      `Circuit layout supports at most ${MAX_LAYOUT_INPUTS} inputs; received ${level.inputs.length}.`,
+    );
+  }
+
+  function assertGateSourceCapacity(node: CircuitNode) {
+    if (node.type === "input") {
+      return;
+    }
+
+    if (node.inputs.length > MAX_GATE_INPUTS) {
+      throw new Error(
+        `Circuit layout supports at most ${MAX_GATE_INPUTS} sources per gate; ${node.gate} received ${node.inputs.length}.`,
+      );
+    }
+
+    node.inputs.forEach(assertGateSourceCapacity);
+  }
+
+  assertGateSourceCapacity(level.circuit.output);
+
+  const depth = getGateDepth(level.circuit.output);
+  if (depth > MAX_LAYOUT_DEPTH) {
+    throw new Error(
+      `Circuit layout supports a maximum depth of ${MAX_LAYOUT_DEPTH}; received ${depth}.`,
+    );
+  }
+}
+
 function isSingleGateCircuit(level: LevelDefinition) {
   return getGateDepth(level.circuit.output) === 1;
 }
@@ -505,6 +539,7 @@ export function CircuitBoard({
   onToggleInput,
 }: CircuitBoardProps) {
   const topologyDescriptionId = useId();
+  assertSupportedCircuitLayout(level);
   const outputText = formatValue(result);
   const outputDescription = revealOutput
     ? `Salida actual ${outputText}`
