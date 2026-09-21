@@ -290,6 +290,10 @@ function getGateDepth(node: CircuitNode): number {
   return 1 + Math.max(...node.inputs.map(getGateDepth));
 }
 
+function isSingleGateCircuit(level: LevelDefinition) {
+  return getGateDepth(level.circuit.output) === 1;
+}
+
 function getChallengeGateX(depth: number, maxDepth: number) {
   if (maxDepth >= 3) {
     const deepCircuitColumns = [608, 392, 168];
@@ -435,7 +439,7 @@ function renderFallbackBoard(
   result: boolean,
   revealOutput: boolean,
 ) {
-  if (level.gates.length === 1) {
+  if (isSingleGateCircuit(level)) {
     return renderPracticeBoard(level, inputStates, result);
   }
 
@@ -443,12 +447,11 @@ function renderFallbackBoard(
 }
 
 function getInputNodeHotspots(level: LevelDefinition) {
-  const yPositions =
-    level.gates.length === 1
-      ? level.inputs.length === 1
-        ? oneInputYPositions
-        : twoInputYPositions
-      : getInputYPositions(level.inputs.length);
+  const yPositions = isSingleGateCircuit(level)
+    ? level.inputs.length === 1
+      ? oneInputYPositions
+      : twoInputYPositions
+    : getInputYPositions(level.inputs.length);
 
   return level.inputs.map((input, index) => ({
     input,
