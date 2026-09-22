@@ -159,6 +159,7 @@ export function LevelScreen({
     return () => {
       window.clearTimeout(showPulse);
       window.clearTimeout(hidePulse);
+      setPulse(null);
     };
   }, [
     challengeState?.hasSubmittedCurrentLevel,
