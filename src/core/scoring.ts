@@ -36,6 +36,10 @@ export function calculateAttemptScore({
     return 0;
   }
 
+  if (![attempts, elapsedSeconds].every(Number.isSafeInteger)) {
+    return 0;
+  }
+
   const safeAttempts = Math.max(1, attempts);
   const safeElapsedSeconds = Math.max(0, elapsedSeconds);
   const score =
@@ -54,6 +58,14 @@ export function calculateChallengeScore({
   streak,
 }: ChallengeScoreInput): ChallengeScoreResult {
   if (!isCorrect) {
+    return { points: 0, nextStreak: 0 };
+  }
+
+  if (
+    ![levelNumber, elapsedSeconds, wrongSubmissions, streak].every(
+      Number.isSafeInteger,
+    )
+  ) {
     return { points: 0, nextStreak: 0 };
   }
 
