@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { App } from "./App";
 
@@ -53,5 +53,40 @@ describe("level live status", () => {
     expect(
       screen.queryByText(/pulso de corrección activo/i),
     ).not.toBeInTheDocument();
+  });
+
+  it("restarts identical challenge pulses after input invalidates a submission", async () => {
+    const { container } = render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: /empezar/i }));
+    fireEvent.click(screen.getByRole("button", { name: /iniciar reto/i }));
+
+    const inputB = await screen.findByRole("button", { name: /entrada b/i });
+    const submit = screen.getByRole("button", { name: /enviar respuesta/i });
+    const status = screen.getByRole("status");
+    const board = container.querySelector(".level-board");
+
+    expect(board).not.toBeNull();
+
+    fireEvent.click(submit);
+
+    await waitFor(() => expect(board).toHaveClass("is-miss-pulse"));
+    expect(screen.getByText(/racha rota:/i)).toBeInTheDocument();
+    expect(status.textContent).toBe(
+      "Respuesta incorrecta. Salida 0. Racha rota. Revisa las entradas y vuelve a enviar.",
+    );
+
+    fireEvent.click(inputB);
+
+    expect(board).not.toHaveClass("is-miss-pulse");
+
+    fireEvent.click(submit);
+
+    expect(board).not.toHaveClass("is-miss-pulse");
+    await waitFor(() => expect(board).toHaveClass("is-miss-pulse"));
+    expect(screen.getByText(/racha rota:/i)).toBeInTheDocument();
+    expect(status.textContent).toBe(
+      "Respuesta incorrecta. Salida 0. Racha rota. Revisa las entradas y vuelve a enviar.",
+    );
+    expect(status).not.toHaveTextContent(/pulso de corrección activo/i);
   });
 });
