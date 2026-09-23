@@ -1,3 +1,4 @@
+import { evaluateCircuit } from "./evaluateCircuit";
 import { generateTruthTable } from "./truthTable";
 import type { GateName, InputName, InputStates, LevelDefinition } from "./gameTypes";
 
@@ -86,8 +87,8 @@ function getHint(
 export function getPracticeFeedback(
   level: LevelDefinition,
   inputStates: InputStates,
-  result: boolean,
 ): EducationalFeedback {
+  const result = evaluateCircuit(level.circuit, inputStates);
   const gate = level.gates[0];
   const currentCombination = formatCombination(level.inputs, inputStates);
   const targetRows = generateTruthTable(level.circuit)
