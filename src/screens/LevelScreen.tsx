@@ -92,7 +92,7 @@ export function LevelScreen({
   const currentRowKey = getCurrentRowKey(level.inputs, inputStates);
   const feedback = isChallenge
     ? null
-    : getPracticeFeedback(level, inputStates, result);
+    : getPracticeFeedback(level, inputStates);
   const progress = Math.round((currentLevel / totalLevels) * 100);
   const heading = getLevelHeading(level);
   const isOutputRevealed =
