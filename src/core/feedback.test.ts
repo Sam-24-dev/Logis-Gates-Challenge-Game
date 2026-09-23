@@ -3,6 +3,17 @@ import { getPracticeFeedback } from "./feedback.ts";
 import { levelsByDifficulty } from "../data/levels";
 
 describe("getPracticeFeedback", () => {
+  it("derives solved feedback from the circuit and current inputs", () => {
+    const feedback = getPracticeFeedback(
+      levelsByDifficulty.easy[1],
+      { A: true, B: true },
+    );
+
+    expect(feedback.status).toBe("solved");
+    expect(feedback.reading).toContain("salida 1");
+    expect(feedback.hint).toMatch(/ya coincide/i);
+  });
+
   it("explains why AND stays off when only one input is active", () => {
     const level = levelsByDifficulty.easy[1];
 
