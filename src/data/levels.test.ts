@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { evaluateCircuit } from "../core/evaluateCircuit.ts";
 import { allLevels, levelsByDifficulty } from "./levels.ts";
 
 describe("levelsByDifficulty", () => {
@@ -49,6 +50,28 @@ describe("levelsByDifficulty", () => {
       inputs: ["A", "B", "C", "D"],
       gates: ["XNOR", "NAND", "AND"],
     });
+  });
+
+  it("describes hard 5 victories whether NOR is on or off", () => {
+    const level = levelsByDifficulty.hard[5];
+    const victories = Array.from({ length: 16 }, (_, value) =>
+      value.toString(2).padStart(4, "0"),
+    )
+      .map((bits) => {
+        const [A, B, C, D] = [...bits].map((bit) => bit === "1");
+        return { bits, inputs: { A, B, C, D }, norOn: !A && !B };
+      })
+      .filter(({ inputs }) => evaluateCircuit(level.circuit, inputs));
+
+    expect(victories.map(({ bits, norOn }) => [bits, norOn])).toEqual([
+      ["0001", true],
+      ["0111", false],
+      ["1011", false],
+      ["1111", false],
+    ]);
+    expect(level.feedbackCorrect).toBe(
+      "XOR comparó la salida de NOR con C y D confirmó la señal final.",
+    );
   });
 
   it("distributes the seven learned gates across the challenge route", () => {
