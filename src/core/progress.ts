@@ -28,9 +28,13 @@ function getDefaultStorage(): Storage | null {
   }
 }
 
-function toSafeNumber(value: unknown) {
-  return typeof value === "number" && Number.isFinite(value)
-    ? Math.max(0, Math.floor(value))
+const maxRouteLevels = 7;
+
+function toSafeNumber(value: unknown, maximum = Number.MAX_SAFE_INTEGER) {
+  return typeof value === "number" &&
+    Number.isSafeInteger(value) &&
+    value <= maximum
+    ? Math.max(0, value)
     : 0;
 }
 
@@ -47,9 +51,18 @@ function parseProgress(value: unknown): StoredProgress {
 
   return {
     bestChallengeScore: toSafeNumber(candidate.bestChallengeScore),
-    bestChallengeStreak: toSafeNumber(candidate.bestChallengeStreak),
-    challengeCompletedLevels: toSafeNumber(candidate.challengeCompletedLevels),
-    practiceCompletedLevels: toSafeNumber(candidate.practiceCompletedLevels),
+    bestChallengeStreak: toSafeNumber(
+      candidate.bestChallengeStreak,
+      maxRouteLevels,
+    ),
+    challengeCompletedLevels: toSafeNumber(
+      candidate.challengeCompletedLevels,
+      maxRouteLevels,
+    ),
+    practiceCompletedLevels: toSafeNumber(
+      candidate.practiceCompletedLevels,
+      maxRouteLevels,
+    ),
     version: 1,
   };
 }
@@ -58,22 +71,25 @@ export function mergeProgress(
   current: StoredProgress,
   patch: ProgressPatch,
 ): StoredProgress {
+  const safeCurrent = parseProgress(current);
+  const safePatch = parseProgress({ ...patch, version: 1 });
+
   return {
     bestChallengeScore: Math.max(
-      current.bestChallengeScore,
-      toSafeNumber(patch.bestChallengeScore),
+      safeCurrent.bestChallengeScore,
+      safePatch.bestChallengeScore,
     ),
     bestChallengeStreak: Math.max(
-      current.bestChallengeStreak,
-      toSafeNumber(patch.bestChallengeStreak),
+      safeCurrent.bestChallengeStreak,
+      safePatch.bestChallengeStreak,
     ),
     challengeCompletedLevels: Math.max(
-      current.challengeCompletedLevels,
-      toSafeNumber(patch.challengeCompletedLevels),
+      safeCurrent.challengeCompletedLevels,
+      safePatch.challengeCompletedLevels,
     ),
     practiceCompletedLevels: Math.max(
-      current.practiceCompletedLevels,
-      toSafeNumber(patch.practiceCompletedLevels),
+      safeCurrent.practiceCompletedLevels,
+      safePatch.practiceCompletedLevels,
     ),
     version: 1,
   };
