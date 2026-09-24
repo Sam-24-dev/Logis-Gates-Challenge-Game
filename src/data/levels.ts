@@ -207,7 +207,8 @@ const hardLevels: Record<number, LevelDefinition> = {
         input("D"),
       ]),
     ),
-    feedbackCorrect: "NOR exigió silencio en su rama y XOR comparó contra C.",
+    feedbackCorrect:
+      "XOR comparó la salida de NOR con C y D confirmó la señal final.",
     feedbackIncorrect:
       "NOR solo se activa con A y B apagadas; después revisa C y D.",
     initialInputStates: { A: true, B: false, C: false, D: false },
