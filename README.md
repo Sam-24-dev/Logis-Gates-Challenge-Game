@@ -5,9 +5,7 @@
 ![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=061018)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Vitest](https://img.shields.io/badge/Vitest-62%2F62_tests-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-Production-000000?style=for-the-badge&logo=vercel&logoColor=white)
-![Lighthouse accessibility audit](https://img.shields.io/badge/Lighthouse_Accessibility-100%2F100-success?style=for-the-badge)
 
 <br />
 
@@ -66,20 +64,9 @@
 
 ## Quality Snapshot
 
-Latest automated Lighthouse production audit target:
+[CI](./.github/workflows/ci.yml) runs lint, tests, build, and dependency audit on pull requests and `main`.
 
-```text
-https://logis-gates-challenge-game.vercel.app/
-```
-
-| Category | Score |
-| --- | ---: |
-| Performance | 92+ |
-| Accessibility | 100 |
-| Best Practices | 100 |
-| SEO | 100 |
-
-`Accessibility 100` is the Lighthouse automated audit score, not a claim of complete WCAG or assistive-technology conformance.
+For historical context, the [Phase 10 QA report](./documentation/phase10-final-qa-report.md) documents a Lighthouse run against a **local preview** of a production build, not the current Production deployment or a WCAG conformance assessment.
 
 Validation used during release work:
 
@@ -90,8 +77,6 @@ npm run build
 npm audit --audit-level=high
 git --no-pager diff --check
 ```
-
-Current automated test baseline: **64/64 passing**.
 
 Manual checks include console, responsive widths (`320`, `375`, `768`, `1024`, `1365`, `1440`), keyboard/focus behavior, tap target size, sitemap XML, robots.txt, and Vercel headers.
 
@@ -155,8 +140,10 @@ flowchart TD
 
 ## Quick Start
 
+CI uses Node.js `22.20.0` as its reference environment; this is not a declared minimum supported version.
+
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 
