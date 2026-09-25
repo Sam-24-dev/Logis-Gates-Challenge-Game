@@ -44,6 +44,50 @@ describe("stored progress", () => {
     );
   });
 
+  it("returns independent defaults without storage or a stored value", () => {
+    window.localStorage.clear();
+
+    for (const storage of [null, window.localStorage]) {
+      const first = loadStoredProgress(storage);
+      const second = loadStoredProgress(storage);
+
+      expect(first).toEqual(defaultProgress);
+      expect(first).not.toBe(defaultProgress);
+      expect(first).not.toBe(second);
+      first.bestChallengeScore = 42;
+      expect(second).toEqual(defaultProgress);
+      expect(defaultProgress.bestChallengeScore).toBe(0);
+    }
+  });
+
+  it("returns independent defaults for corrupt or incompatible records", () => {
+    for (const raw of ["not-json", "null", "0", '{"version":2}']) {
+      window.localStorage.setItem(progressStorageKey, raw);
+      const first = loadStoredProgress();
+      const second = loadStoredProgress();
+
+      expect(first).toEqual(defaultProgress);
+      expect(first).not.toBe(defaultProgress);
+      expect(first).not.toBe(second);
+      first.bestChallengeScore = 42;
+      expect(second).toEqual(defaultProgress);
+      expect(defaultProgress.bestChallengeScore).toBe(0);
+    }
+  });
+
+  it("returns independent defaults when storage reads throw", () => {
+    const storage = createThrowingStorage();
+    const first = loadStoredProgress(storage);
+    const second = loadStoredProgress(storage);
+
+    expect(first).toEqual(defaultProgress);
+    expect(first).not.toBe(defaultProgress);
+    expect(first).not.toBe(second);
+    first.bestChallengeScore = 42;
+    expect(second).toEqual(defaultProgress);
+    expect(defaultProgress.bestChallengeScore).toBe(0);
+  });
+
   it("falls back safely when the default localStorage getter throws", () => {
     const descriptor = Object.getOwnPropertyDescriptor(window, "localStorage");
 
@@ -55,7 +99,11 @@ describe("stored progress", () => {
     });
 
     try {
-      expect(loadStoredProgress()).toEqual(defaultProgress);
+      const first = loadStoredProgress();
+      const second = loadStoredProgress();
+      expect(first).toEqual(defaultProgress);
+      expect(first).not.toBe(defaultProgress);
+      expect(first).not.toBe(second);
       expect(saveStoredProgress(defaultProgress)).toBe(false);
     } finally {
       if (descriptor) {
