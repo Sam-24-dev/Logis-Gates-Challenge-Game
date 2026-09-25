@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { evaluateCircuit } from "../core/evaluateCircuit.ts";
+import type { CircuitNode } from "../core/gameTypes.ts";
+import { generateTruthTable } from "../core/truthTable.ts";
+import { gateDefinitions } from "./gates.ts";
 import { allLevels, levelsByDifficulty } from "./levels.ts";
 
 describe("levelsByDifficulty", () => {
@@ -23,6 +26,50 @@ describe("levelsByDifficulty", () => {
       "7",
     ]);
     expect(allLevels).toHaveLength(14);
+  });
+
+  it.each(
+    (["easy", "hard"] as const).flatMap((difficulty) =>
+      Object.entries(levelsByDifficulty[difficulty]).map(([number, level]) => ({
+        difficulty,
+        number: Number(number),
+        level,
+      })),
+    ),
+  )("keeps $difficulty-$number consistent with its circuit", ({
+    difficulty,
+    number,
+    level,
+  }) => {
+    expect(level).toMatchObject({
+      id: `${difficulty}-${number}`,
+      difficulty,
+      levelNumber: number,
+    });
+    expect(level.circuit.inputs).toEqual(level.inputs);
+    expect(new Set(level.inputs).size).toBe(level.inputs.length);
+    expect(new Set(level.gates).size).toBe(level.gates.length);
+
+    const inputs = new Set<string>();
+    const gates = new Set<string>();
+    function visit(node: CircuitNode) {
+      if (node.type === "input") {
+        inputs.add(node.name);
+        return;
+      }
+
+      gates.add(node.gate);
+      expect(node.inputs).toHaveLength(gateDefinitions[node.gate].inputCount);
+      node.inputs.forEach(visit);
+    }
+    visit(level.circuit.output);
+
+    expect([...inputs].sort()).toEqual([...level.inputs].sort());
+    expect([...gates].sort()).toEqual([...level.gates].sort());
+
+    const rows = generateTruthTable(level.circuit);
+    expect(rows).toHaveLength(2 ** level.inputs.length);
+    expect(rows.some((row) => row.output)).toBe(true);
   });
 
   it("keeps display metadata needed by the current UI", () => {
