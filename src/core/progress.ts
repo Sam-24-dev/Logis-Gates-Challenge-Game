@@ -40,13 +40,13 @@ function toSafeNumber(value: unknown, maximum = Number.MAX_SAFE_INTEGER) {
 
 function parseProgress(value: unknown): StoredProgress {
   if (!value || typeof value !== "object") {
-    return defaultProgress;
+    return { ...defaultProgress };
   }
 
   const candidate = value as Partial<StoredProgress>;
 
   if (candidate.version !== 1) {
-    return defaultProgress;
+    return { ...defaultProgress };
   }
 
   return {
@@ -102,12 +102,12 @@ export function loadStoredProgress(
     const rawValue = storage?.getItem(progressStorageKey);
 
     if (!rawValue) {
-      return defaultProgress;
+      return { ...defaultProgress };
     }
 
     return parseProgress(JSON.parse(rawValue));
   } catch {
-    return defaultProgress;
+    return { ...defaultProgress };
   }
 }
 
