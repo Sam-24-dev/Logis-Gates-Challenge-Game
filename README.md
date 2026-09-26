@@ -58,7 +58,7 @@
 - **Truth tables** in practice mode to connect each circuit with formal logic.
 - **Local progress** for completed practice levels, challenge progress, best score, and best streak.
 - **Accessibility foundations** with semantic structure, skip links, focus management, ARIA announcements, keyboard support, visible focus, and reduced-motion handling.
-- **Production hardening** with sitemap, robots.txt, security headers, immutable asset caching, and optimized local fonts.
+- **Production hardening** with sitemap, robots.txt, security headers, immutable asset caching, and locally hosted fonts.
 
 ---
 
@@ -221,9 +221,11 @@ Out of scope for this V2:
 ## License
 
 Original project code is licensed under the [MIT License](./LICENSE).
-The third-party font files `public/fonts/oxanium-latin.woff2` and
-`public/fonts/share-tech-mono-latin.woff2` are **not** covered by MIT; their
-provenance and notices will be addressed separately.
+The third-party fonts [Oxanium](./public/fonts/oxanium-23e54b5.ttf) and
+[Share Tech Mono](./public/fonts/share-tech-mono-23e54b5.ttf) are not covered
+by MIT; they are distributed under their respective [Oxanium OFL notice](./public/fonts/OFL-Oxanium.txt)
+and [Share Tech Mono OFL notice](./public/fonts/OFL-Share-Tech-Mono.txt), copied
+from [google/fonts@23e54b51ddffbc7713c583748e3bd86f62b1fa4a](https://github.com/google/fonts/tree/23e54b51ddffbc7713c583748e3bd86f62b1fa4a).
 
 ---
 
