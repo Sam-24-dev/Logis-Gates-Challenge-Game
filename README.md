@@ -218,6 +218,15 @@ Out of scope for this V2:
 
 ---
 
+## License
+
+Original project code is licensed under the [MIT License](./LICENSE).
+The third-party font files `public/fonts/oxanium-latin.woff2` and
+`public/fonts/share-tech-mono-latin.woff2` are **not** covered by MIT; their
+provenance and notices will be addressed separately.
+
+---
+
 ## Documentation
 
 - Master plan: `documentation/v2-product-implementation-plan.md`
