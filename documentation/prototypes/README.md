@@ -1,15 +1,17 @@
 # Prototipos V2
 
-Esta carpeta guarda materiales de Fase 3.5 antes de implementar Fase 4.
+Archivo histórico del prototipado V2 (Fase 3.5). La Fase 4 y las fases 0–10 ya están completadas.
+
+Para el producto actual, consulta el [README principal](../../README.md); para el historial y el tracker, el [plan V2](../v2-product-implementation-plan.md).
 
 ## Archivos
 
-- `open-design-prompts.md` — prompts listos para usar en Open Design.
-- `welcome-screen-implementation-plan.md` — plan para convertir la WelcomeScreen iterada por MCP a React.
+- `open-design-prompts.md` — prompts de Fase 3.5 conservados como referencia histórica.
+- `welcome-screen-implementation-plan.md` — plan histórico para llevar la WelcomeScreen iterada por MCP a React.
 
-## Dirección prototipo actual
+## Dirección de prototipo elegida en Fase 3.5 (histórico)
 
-Decisión actual de Fase 3.5:
+Decisión de entonces:
 
 ```text
 Base funcional: Open Design v3/v4
@@ -18,21 +20,15 @@ Artifact MCP creado: digital-logic-lab-v4-stitch-refined.html
 Welcome recomendado: digital-logic-lab-welcome-v3-mcp.html
 ```
 
-El artifact `digital-logic-lab-v4-stitch-refined.html` vive en el proyecto local de Open Design:
+El artifact `digital-logic-lab-v4-stitch-refined.html` se creó en un proyecto local de Open Design:
 
 ```text
 Digital Logic Lab — DESIGN.md Design System
 ```
 
-Ruta física conocida:
+Los HTML y demás exports de Open Design citados aquí no están versionados en este repositorio. [DESIGN.md](../../DESIGN.md) y las [capturas de baseline](../baseline/) sí lo están, pero no sustituyen esos prototipos.
 
-```text
-C:\Users\USER\AppData\Roaming\Open Design\namespaces\release-stable-win\data\projects\brand-digital-logic-lab-design-md-4c16fb\digital-logic-lab-v4-stitch-refined.html
-```
-
-Usarlo como referencia visual/UX, no como código final copiado sin revisión.
-
-## Skills recomendadas para Fase 4
+## Skills consideradas para Fase 4 (histórico)
 
 | Momento | Skill/recurso |
 | --- | --- |
@@ -45,18 +41,11 @@ Usarlo como referencia visual/UX, no como código final copiado sin revisión.
 | Revisar diff antes de cerrar | `ponytail-review` |
 | Validar cambios | `lint-and-validate` |
 
-Regla: primero claridad funcional; después motion mínimo. No agregar dependencias nuevas solo por estética.
+Criterio propuesto entonces: primero claridad funcional; después motion mínimo. No agregar dependencias nuevas solo por estética.
 
-## Flujo recomendado
+## Flujo propuesto para Fase 3.5 (histórico)
 
-1. Instalar Open Design en Windows.
-2. Abrir o vincular este repositorio.
-3. Usar `DESIGN.md` de la raíz como design system.
-4. Generar prototipo completo con el prompt maestro.
-5. Refinar pantalla por pantalla.
-6. Exportar HTML/screenshots/video a `open-design-exports/`.
-7. Elegir una variante aprobada.
-8. Implementar Fase 4 en React usando el prototipo como referencia.
+Se propuso instalar Open Design, vincular este repositorio y `DESIGN.md`, generar y refinar prototipos, exportarlos a `open-design-exports/` y luego implementar Fase 4 en React. Es el plan de entonces, no una lista de pasos pendientes para usar la app actual.
 
 ## Regla importante
 
