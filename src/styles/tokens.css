@@ -3,7 +3,7 @@
     font-style: normal;
     font-weight: 500 700;
     font-display: swap;
-    src: url("/fonts/oxanium-latin.woff2") format("woff2");
+    src: url("/fonts/oxanium-23e54b5.ttf") format("truetype");
 }
 
 @font-face {
@@ -11,7 +11,7 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url("/fonts/share-tech-mono-latin.woff2") format("woff2");
+    src: url("/fonts/share-tech-mono-23e54b5.ttf") format("truetype");
 }
 
 :root {
