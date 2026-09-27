@@ -183,15 +183,45 @@ export function ResultsScreen({
                   {modeCopy.title.split(" ").slice(1).join(" ")}
                 </span>
               </h1>
+              <section
+                className="results-route"
+                aria-labelledby="results-route-title"
+              >
+                <div className="results-route-top">
+                  <span>Registro de recorrido</span>
+                  <svg viewBox="0 0 28 28" aria-hidden="true" focusable="false">
+                    <path d="M2 18h7l4-9 4 14 4-8h5" />
+                    <circle cx="26" cy="15" r="2.5" />
+                  </svg>
+                </div>
+                <h2 id="results-route-title">Ruta completada</h2>
+                <p className="results-route-readout">
+                  <strong>{totalLevels}/{totalLevels}</strong>
+                  <span>niveles completados</span>
+                </p>
+                <div
+                  className="results-route-path"
+                  aria-hidden="true"
+                  style={{ gridTemplateColumns: `repeat(${totalLevels}, minmax(0, 1fr))` }}
+                >
+                  {completedLevels.map((level) => (
+                    <span className="results-route-mark" key={level.id}>
+                      <i>✓</i>
+                      <small>{String(level.levelNumber).padStart(2, "0")}</small>
+                    </span>
+                  ))}
+                </div>
+                <div className="results-route-ends" aria-hidden="true">
+                  <span>Inicio</span>
+                  <span>Fin de ruta ✓</span>
+                </div>
+              </section>
               <p className="results-lead">{modeCopy.lead}</p>
 
-              <div className="results-summary" aria-label="Resumen de progreso">
-                <div className="results-metric">
-                  <span>Niveles</span>
-                  <strong>
-                    {totalLevels}/{totalLevels}
-                  </strong>
-                </div>
+              <div
+                className={`results-summary${completedDifficulty === "hard" ? " is-challenge" : ""}`}
+                aria-label="Resumen de progreso"
+              >
                 <div className="results-metric">
                   <span>
                     {completedDifficulty === "hard" ? "Puntos" : "Ruta"}
@@ -282,38 +312,6 @@ export function ResultsScreen({
           >
             <div className="results-badge">Señales estabilizadas</div>
 
-            <div className="results-core">
-              <svg
-                viewBox="0 0 320 320"
-                role="img"
-                aria-label="Indicador de ruta completada al cien por ciento"
-              >
-                <circle className="results-ring-bg" cx="160" cy="160" r="112" />
-                <circle
-                  className="results-ring"
-                  cx="160"
-                  cy="160"
-                  r="112"
-                  pathLength="100"
-                />
-                <path
-                  className="results-trace"
-                  d="M74 160h54l21-42 25 84 20-42h52"
-                />
-                <circle className="results-hub" cx="160" cy="160" r="44" />
-                <text
-                  x="160"
-                  y="169"
-                  textAnchor="middle"
-                  fill="#061018"
-                  fontSize="34"
-                  fontWeight="950"
-                >
-                  100%
-                </text>
-              </svg>
-            </div>
-
             <div className="results-learned">
               <h2 id="results-learned-title">Lo que ya dominas</h2>
               <ul
@@ -328,17 +326,6 @@ export function ResultsScreen({
                   </li>
                 ))}
               </ul>
-              <ol
-                className="results-timeline"
-                aria-label="Niveles completados"
-              >
-                {completedLevels.map((level) => (
-                  <li className="results-step" key={level.id}>
-                    {String(level.levelNumber).padStart(2, "0")}
-                    <span>{level.gates.join(" · ")}</span>
-                  </li>
-                ))}
-              </ol>
             </div>
           </aside>
         </div>
