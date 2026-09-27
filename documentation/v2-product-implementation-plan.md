@@ -2,7 +2,7 @@
 
 Este documento es la fuente principal para construir la versión 2.0 de `Logic Gates Challenge Game`. La V2 debe transformar la app básica actual en un producto educativo interactivo, profesional, rápido, entretenido y memorable.
 
-> Estado actual del plan: **Fase 8 — Modo reto, score y progreso completada. Fase 9 queda pendiente para deploy/presentación profesional.**
+> Estado del plan V2: **fases 0–10 completadas (ver Phase tracker, sección 18).** Este documento conserva el historial de implementación V2; no enumera todas las tareas posteriores al lanzamiento.
 
 ## 1. Decisión principal
 

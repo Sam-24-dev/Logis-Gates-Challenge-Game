@@ -117,7 +117,8 @@ Estado actualizado tras Fase 10:
 
 Cuando el usuario autorice implementación:
 
-- Crear rama: `feature/ui-ux-v2`
+- Para trabajo posterior a V2, crear una rama nueva y enfocada desde la base `main` confirmada; proteger cualquier checkout con cambios previos.
+- La rama `feature/ui-ux-v2` pertenece al historial de Fase 0; no reutilizarla para nuevos cambios.
 - No hacer merge directo a `main`.
 - Preferir PR revisable.
 - Mantener commits descriptivos.
