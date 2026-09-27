@@ -9,7 +9,7 @@ This repository uses **Release Please** to automate GitHub releases from Convent
 3. Release Please opens or updates a **Release PR** with:
    - version bumps in `package.json`, `package-lock.json`, and `.release-please-manifest.json`
    - generated release notes in `CHANGELOG.md`
-4. When the Release PR is merged, Release Please creates the GitHub Release and tag, for example `v2.0.1`.
+4. After the Release PR is merged, a subsequent Release Please run can create a component-prefixed tag and GitHub Release. This workflow does not run `npm publish`.
 
 Release Please does **not** publish a new release for every merge immediately. It keeps a release PR ready, then the maintainer decides when to merge that release PR.
 
@@ -34,69 +34,29 @@ Release Please is configured by:
 - `release-please-config.json`
 - `.release-please-manifest.json`
 
-The current baseline version is:
+The recorded version lives in [`.release-please-manifest.json`](../.release-please-manifest.json). Check [GitHub Releases](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/releases) and tags for the latest published version. For example, [2.1.1](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/releases/tag/logic-gates-challenge-game-v2.1.1) was published on 2026-09-27 as `logic-gates-challenge-game-v2.1.1`.
 
-```text
-2.0.0
-```
+The configured bootstrap commit `30fd0486735147121317cdceb7fa2c19c4e726c7` is the historical V2 baseline, not the current version. Tags use the component prefix `logic-gates-challenge-game-vX.Y.Z` (see `include-v-in-tag` in `release-please-config.json`).
 
-The release history is bootstrapped from the V2 production baseline commit:
+## If release automation fails
 
-```text
-30fd0486735147121317cdceb7fa2c19c4e726c7
-```
+The [release workflow](../.github/workflows/release-please.yml) requests `contents: write`, `issues: write`, and `pull-requests: write` for its job. Inspect the run logs, effective permissions, and relevant GitHub Actions settings before changing anything; do not recommend repository-wide write access by default.
 
-That means future Release Please PRs should only describe changes merged after the V2 final baseline.
-
-## Required GitHub setting
-
-If Release Please does not open a PR after a releasable commit lands on `main`, check this setting:
-
-```text
-Settings → Actions → General → Workflow permissions
-```
-
-Recommended setting:
-
-```text
-Read and write permissions
-Allow GitHub Actions to create and approve pull requests
-```
-
-The workflow uses the default `GITHUB_TOKEN`. That is enough for GitHub releases and Release PRs in this repository.
-
-## Initial release note
-
-If the repository has no GitHub releases yet, create the first `v2.0.0` release from the V2 final `main` commit. After that, let Release Please manage future releases.
+Release PRs created or updated with `GITHUB_TOKEN` may need maintainer approval before their CI runs, and token-created events do not necessarily trigger other workflows. Check the actual required `quality` check rather than bypassing it or adding a PAT/App by default. See [GitHub token permissions](https://docs.github.com/en/actions/how-tos/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token) and [Release Please Action](https://github.com/googleapis/release-please-action#other-actions-on-release-please-prs).
 
 ## Maintainer checklist
 
 Before merging a Release PR:
 
-- [ ] Confirm the generated version is correct.
-- [ ] Read `CHANGELOG.md` and remove anything noisy if needed.
-- [ ] Confirm Vercel production is healthy after the original feature/fix PRs.
-- [ ] Merge the Release PR.
-- [ ] Confirm the GitHub Release appears under the repository Releases page.
+- [ ] Review the generated diff, proposed version, and notes against the current manifest and published releases.
+- [ ] Confirm the branch is up to date with `main` and the required `quality` check has completed successfully.
+
+After merging:
+
+- [ ] Confirm the push CI and Release Please workflow results on the new `main` commit.
+- [ ] Confirm the prefixed tag targets the intended commit and the GitHub Release was actually published.
+- [ ] If Vercel deploys automatically, check Production and the canonical domain separately from the GitHub Release.
 
 ## Example flow
 
-```text
-feat: add onboarding tutorial
-```
-
-After merge to `main`, Release Please opens a Release PR for a minor version bump, for example:
-
-```text
-v2.1.0
-```
-
-```text
-fix: correct XNOR challenge feedback
-```
-
-After merge to `main`, Release Please opens or updates a Release PR for a patch version bump, for example:
-
-```text
-v2.0.1
-```
+A `feat:` commit such as `feat: add onboarding tutorial` may lead to a minor Release PR; a `fix:` commit such as `fix: correct XNOR challenge feedback` may lead to a patch Release PR. Merging either change does not publish a new release immediately: the maintainer reviews and merges the generated Release PR separately, then verifies its automated outcomes above.
