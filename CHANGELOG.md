@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/compare/logic-gates-challenge-game-v2.1.1...logic-gates-challenge-game-v2.2.0) (2026-09-28)
+
+
+### Features
+
+* **results:** show completed route readout ([#50](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/issues/50)) ([ae220c2](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/commit/ae220c262fdde066eea8f13813e292363b08f38e))
+
 ## [2.1.1](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/compare/logic-gates-challenge-game-v2.1.0...logic-gates-challenge-game-v2.1.1) (2026-09-26)
 
 
