@@ -2299,45 +2299,52 @@
 
 .level-node-hotspot {
     position: absolute;
-    width: clamp(3rem, 7.5vw, 4.25rem);
-    height: clamp(3rem, 7.5vw, 4.25rem);
+    width: clamp(max(48px, 3rem), 7.5vw, max(48px, 4.25rem));
+    height: auto;
+    min-height: clamp(max(48px, 3rem), 7.5vw, max(48px, 4.25rem));
     display: grid;
-    place-items: center;
-    border: 1px solid transparent;
+    align-content: center;
+    justify-items: center;
+    gap: 0.1rem;
+    border: 2px solid var(--color-accent);
     border-radius: 999px;
     padding: 0;
-    color: transparent;
-    background: transparent;
+    color: var(--color-accent-strong);
+    background: #061018;
+    font-family: var(--font-mono);
     cursor: pointer;
     pointer-events: auto;
+    outline-offset: 0.28rem;
     transform: translate(-50%, -50%);
     transition:
         border-color var(--motion-fast),
         box-shadow var(--motion-fast),
-        background var(--motion-fast),
-        transform var(--motion-fast);
+        background var(--motion-fast);
 }
 
 .level-node-hotspot span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
+    font-size: 0.75rem;
+    line-height: 1;
+}
+
+.level-node-hotspot strong {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.level-node-hotspot.is-on {
+    color: #061018;
+    background: var(--color-accent);
 }
 
 .level-node-hotspot:hover {
     border-color: rgb(var(--color-accent-rgb) / 0.74);
-    background: rgb(var(--color-accent-rgb) / 0.08);
     box-shadow:
         0 0 0 0.38rem rgb(var(--color-accent-rgb) / 0.08),
         0 0 1.25rem rgb(var(--color-accent-rgb) / 0.28);
-    transform: translate(-50%, -50%) scale(1.04);
 }
 
 .level-node-hotspot.is-on:hover {
-    background: rgb(159 251 255 / 0.12);
     box-shadow:
         0 0 0 0.38rem rgb(159 251 255 / 0.1),
         0 0 1.35rem rgb(var(--color-accent-rgb) / 0.38);
@@ -2346,7 +2353,6 @@
 .level-node-hotspot:focus-visible {
     outline: 3px solid var(--color-warm);
     outline-offset: 0.28rem;
-    background: rgb(255 209 102 / 0.08);
     box-shadow: 0 0 1.35rem rgb(255 209 102 / 0.32);
 }
 

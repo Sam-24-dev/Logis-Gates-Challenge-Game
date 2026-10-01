@@ -1,4 +1,4 @@
-import { useId, type MouseEvent, type ReactElement } from "react";
+import { useId, useLayoutEffect, useRef, useState, type ReactElement } from "react";
 import { evaluateGate } from "../../core/evaluateGate";
 import type {
   CircuitNode,
@@ -32,7 +32,6 @@ type SignalWireProps = {
 };
 
 type InputNodeProps = {
-  input: InputName;
   isActive: boolean;
   x: number;
   y: number;
@@ -45,8 +44,6 @@ type OutputNodeProps = {
   y: number;
 };
 
-const twoInputYPositions = [170, 270];
-const oneInputYPositions = [220];
 const MAX_LAYOUT_INPUTS = 4;
 const MAX_LAYOUT_DEPTH = 3;
 const MAX_GATE_INPUTS = 2;
@@ -57,6 +54,49 @@ const inputYPositionsByCount: Record<number, number[]> = {
   3: [104, 240, 376],
   4: [82, 164, 336, 418],
 };
+
+type BoardLayout = {
+  inputY: number[];
+  shiftX: number;
+  width: number;
+  height: number;
+  compact: boolean;
+};
+
+function getBoardLayout(
+  inputCount: number,
+  stageWidth: number,
+  controlSize: number,
+  focusSpace: number,
+): BoardLayout {
+  const wideY = inputYPositionsByCount[inputCount];
+  const scale = stageWidth / 860;
+  const margin = controlSize / 2 + focusSpace;
+  const fits =
+    88 * scale >= margin &&
+    wideY.every((y, i) => i === 0 || (y - wideY[i - 1]) * scale >= controlSize + 12);
+  if (fits) {
+    return { inputY: wideY, shiftX: 0, width: 860, height: 480, compact: false };
+  }
+
+  // Move the whole circuit together; reserve CSS space for the target and focus ring.
+  const shiftX = Math.max(
+    0,
+    (margin * 860 - 88 * stageWidth) / Math.max(1, stageWidth - margin),
+  );
+  const width = 860 + shiftX;
+  const compactScale = stageWidth / width;
+  const firstY = Math.max(130, margin / compactScale);
+  const step = Math.max(220, (controlSize + 12.5) / compactScale);
+  const inputY = Array.from({ length: inputCount }, (_, i) => firstY + step * i);
+  return {
+    inputY,
+    shiftX,
+    width,
+    height: Math.max(480, inputY.at(-1)! + Math.max(130, margin / compactScale)),
+    compact: true,
+  };
+}
 
 function formatValue(value: boolean | undefined) {
   return value ? "1" : "0";
@@ -108,7 +148,7 @@ function SignalWire({ d, isActive, variant = "default" }: SignalWireProps) {
   );
 }
 
-function InputNode({ input, isActive, x, y }: InputNodeProps) {
+function InputNode({ isActive, x, y }: InputNodeProps) {
   return (
     <g>
       <circle
@@ -124,9 +164,6 @@ function InputNode({ input, isActive, x, y }: InputNodeProps) {
         textAnchor="middle"
       >
         {formatValue(isActive)}
-      </text>
-      <text className="level-svg-small" x={x - 40} y={y + 48}>
-        {input} = {formatValue(isActive)}
       </text>
     </g>
   );
@@ -256,32 +293,33 @@ function renderPracticeBoard(
   level: LevelDefinition,
   inputStates: InputStates,
   result: boolean,
+  layout: BoardLayout,
 ) {
   const gate = level.gates[0];
-  const inputYPositions =
-    level.inputs.length === 1 ? oneInputYPositions : twoInputYPositions;
-  const gateY = 160;
-  const gateX = 392;
+  const inputYPositions = layout.inputY;
+  const centerY = inputYPositions.reduce((sum, y) => sum + y, 0) / inputYPositions.length;
+  const gateY = centerY - 60;
+  const gateX = 392 + layout.shiftX;
   const outputStart = getGateOutputX(gate, gateX);
 
   return (
     <>
       {level.inputs.map((input, index) => {
         const fromY = inputYPositions[index];
-        const toY = level.inputs.length === 1 ? 220 : index === 0 ? 190 : 250;
+        const toY = gateY + (level.inputs.length === 1 ? 60 : index === 0 ? 30 : 90);
         const isActive = Boolean(inputStates[input]);
-        const path = `M88 ${fromY} H282 C326 ${fromY} 326 ${toY} ${gateX} ${toY}`;
+        const path = `M${88 + layout.shiftX} ${fromY} H${282 + layout.shiftX} C${326 + layout.shiftX} ${fromY} ${326 + layout.shiftX} ${toY} ${gateX} ${toY}`;
 
         return (
           <g key={input}>
             <SignalWire d={path} isActive={isActive} />
-            <InputNode input={input} isActive={isActive} x={88} y={fromY} />
+            <InputNode isActive={isActive} x={88 + layout.shiftX} y={fromY} />
           </g>
         );
       })}
-      <SignalWire d={`M${outputStart} 220 H704`} isActive={result} />
+      <SignalWire d={`M${outputStart} ${centerY} H${704 + layout.shiftX}`} isActive={result} />
       <GateNode gate={gate} isActive={result} x={gateX} y={gateY} />
-      <OutputNode isActive={result} isRevealed x={704} y={220} />
+      <OutputNode isActive={result} isRevealed x={704 + layout.shiftX} y={centerY} />
     </>
   );
 }
@@ -292,10 +330,6 @@ type TreeSource = {
   x: number;
   y: number;
 };
-
-function getInputYPositions(inputCount: number) {
-  return inputYPositionsByCount[inputCount] ?? inputYPositionsByCount[4];
-}
 
 function getGateDepth(node: CircuitNode): number {
   if (node.type === "input") {
@@ -369,6 +403,7 @@ function renderChallengeTree(
   inputStates: InputStates,
   inputPositions: Partial<Record<InputName, number>>,
   maxDepth: number,
+  layout: BoardLayout,
   revealRootResult: boolean,
   depth = 0,
   keyPrefix = "root",
@@ -379,7 +414,7 @@ function renderChallengeTree(
     return {
       elements: [],
       value: Boolean(inputStates[node.name]),
-      x: 118,
+      x: 118 + layout.shiftX,
       y,
     };
   }
@@ -390,6 +425,7 @@ function renderChallengeTree(
       inputStates,
       inputPositions,
       maxDepth,
+      layout,
       revealRootResult,
       depth + 1,
       `${keyPrefix}-${index}`,
@@ -398,8 +434,8 @@ function renderChallengeTree(
   const centerY =
     childSources.reduce((total, child) => total + child.y, 0) /
     childSources.length;
-  const gateY = Math.min(332, Math.max(50, centerY - 60));
-  const gateX = getChallengeGateX(depth, maxDepth);
+  const gateY = Math.min(layout.compact ? layout.height - 134 : 332, Math.max(50, centerY - 60));
+  const gateX = getChallengeGateX(depth, maxDepth) + layout.shiftX;
   const gateValue = evaluateNode(node, inputStates);
   const childElements = childSources.flatMap((child) => child.elements);
   const wireElements = childSources.map((child, index) => {
@@ -439,8 +475,9 @@ function renderChallengeBoard(
   inputStates: InputStates,
   result: boolean,
   revealOutput: boolean,
+  layout: BoardLayout,
 ) {
-  const yPositions = getInputYPositions(level.inputs.length);
+  const yPositions = layout.inputY;
   const inputPositions = Object.fromEntries(
     level.inputs.map((input, index) => [input, yPositions[index]]),
   ) as Partial<Record<InputName, number>>;
@@ -450,6 +487,7 @@ function renderChallengeBoard(
     inputStates,
     inputPositions,
     maxDepth,
+    layout,
     revealOutput,
   );
 
@@ -457,22 +495,21 @@ function renderChallengeBoard(
     <>
       {level.inputs.map((input) => (
         <InputNode
-          input={input}
           isActive={Boolean(inputStates[input])}
           key={input}
-          x={88}
+          x={88 + layout.shiftX}
           y={inputPositions[input] ?? 220}
         />
       ))}
       {tree.elements}
       <SignalWire
-        d={`M${tree.x} ${tree.y} H744`}
+        d={`M${tree.x} ${tree.y} H${744 + layout.shiftX}`}
         isActive={revealOutput && result}
       />
       <OutputNode
         isActive={result}
         isRevealed={revealOutput}
-        x={744}
+        x={744 + layout.shiftX}
         y={tree.y}
       />
     </>
@@ -484,49 +521,13 @@ function renderFallbackBoard(
   inputStates: InputStates,
   result: boolean,
   revealOutput: boolean,
+  layout: BoardLayout,
 ) {
   if (isSingleGateCircuit(level)) {
-    return renderPracticeBoard(level, inputStates, result);
+    return renderPracticeBoard(level, inputStates, result, layout);
   }
 
-  return renderChallengeBoard(level, inputStates, result, revealOutput);
-}
-
-function getInputNodeHotspots(level: LevelDefinition) {
-  const yPositions = isSingleGateCircuit(level)
-    ? level.inputs.length === 1
-      ? oneInputYPositions
-      : twoInputYPositions
-    : getInputYPositions(level.inputs.length);
-
-  return level.inputs.map((input, index) => ({
-    input,
-    x: 88,
-    y: yPositions[index] ?? 220,
-  }));
-}
-
-function getClosestInputHotspot(
-  inputHotspots: ReturnType<typeof getInputNodeHotspots>,
-  clientX: number,
-  clientY: number,
-  bounds: DOMRect,
-) {
-  const pointerX = ((clientX - bounds.left) / bounds.width) * 860;
-  const pointerY = ((clientY - bounds.top) / bounds.height) * 480;
-
-  return inputHotspots.reduce((closest, hotspot) => {
-    const closestDistance = Math.hypot(
-      closest.x - pointerX,
-      closest.y - pointerY,
-    );
-    const hotspotDistance = Math.hypot(
-      hotspot.x - pointerX,
-      hotspot.y - pointerY,
-    );
-
-    return hotspotDistance < closestDistance ? hotspot : closest;
-  }).input;
+  return renderChallengeBoard(level, inputStates, result, revealOutput, layout);
 }
 
 export function CircuitBoard({
@@ -539,45 +540,69 @@ export function CircuitBoard({
   onToggleInput,
 }: CircuitBoardProps) {
   const topologyDescriptionId = useId();
+  const stageRef = useRef<HTMLDivElement>(null);
+  const controlRef = useRef<HTMLButtonElement>(null);
+  const [dimensions, setDimensions] = useState({
+    width: 860,
+    size: 68,
+    focusSpace: 12,
+  });
+  useLayoutEffect(() => {
+    const stage = stageRef.current;
+    const control = controlRef.current;
+    if (!stage || !control) return;
+    const measure = () => {
+      const width = stage.getBoundingClientRect().width;
+      const bounds = control.getBoundingClientRect();
+      const size = Math.max(bounds.width, bounds.height);
+      if (!width || !size) return;
+      const focusSpace = 7 + (parseFloat(getComputedStyle(control).outlineOffset) || 0);
+      setDimensions((previous) =>
+        previous.width === width &&
+        previous.size === size &&
+        previous.focusSpace === focusSpace
+          ? previous
+          : { width, size, focusSpace },
+      );
+    };
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    // One observer measures the stage and one representative control, including rem changes.
+    const observer = new ResizeObserver(measure);
+    observer.observe(stage);
+    observer.observe(control);
+    return () => observer.disconnect();
+  }, []);
+
   assertSupportedCircuitLayout(level);
   const outputText = formatValue(result);
   const outputDescription = revealOutput
     ? `Salida actual ${outputText}`
     : "Salida oculta hasta enviar respuesta";
+  const layout = getBoardLayout(
+    level.inputs.length,
+    dimensions.width,
+    dimensions.size,
+    dimensions.focusSpace,
+  );
   const boardContent = renderFallbackBoard(
     level,
     inputStates,
     result,
     revealOutput,
+    layout,
   );
-  const inputHotspots = getInputNodeHotspots(level);
-  const handlePointerClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (event.detail === 0) {
-      return;
-    }
-
-    const bounds = event.currentTarget.getBoundingClientRect();
-    if (!bounds.width || !bounds.height) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-    onToggleInput(
-      getClosestInputHotspot(
-        inputHotspots,
-        event.clientX,
-        event.clientY,
-        bounds,
-      ),
-    );
-  };
+  const inputHotspots = level.inputs.map((input, index) => ({
+    input,
+    x: 88 + layout.shiftX,
+    y: layout.inputY[index],
+  }));
 
   return (
     <div className={`level-board ${pulse ? `is-${pulse}-pulse` : ""}`}>
-      <div className="level-board-stage">
+      <div className="level-board-stage" ref={stageRef}>
         <svg
-          viewBox="0 0 860 480"
+          viewBox={`0 0 ${layout.width} ${layout.height}`}
           role="img"
           aria-describedby={topologyDescriptionId}
           aria-label={`${heading}. ${outputDescription}. Entradas: ${level.inputs
@@ -593,9 +618,8 @@ export function CircuitBoard({
           className="level-node-hotspots"
           role="group"
           aria-label="Controles del circuito"
-          onClickCapture={handlePointerClick}
         >
-          {inputHotspots.map(({ input, x, y }) => {
+          {inputHotspots.map(({ input, x, y }, index) => {
             const isOn = Boolean(inputStates[input]);
             const nextState = isOn ? "apagar" : "encender";
 
@@ -605,14 +629,16 @@ export function CircuitBoard({
                 aria-pressed={isOn}
                 className={`level-node-hotspot ${isOn ? "is-on" : ""}`}
                 key={input}
+                ref={index === 0 ? controlRef : undefined}
                 style={{
-                  left: `${(x / 860) * 100}%`,
-                  top: `${(y / 480) * 100}%`,
+                  left: `${(x / layout.width) * 100}%`,
+                  top: `${(y / layout.height) * 100}%`,
                 }}
                 type="button"
                 onClick={() => onToggleInput(input)}
               >
                 <span>{input}</span>
+                <strong>{formatValue(isOn)}</strong>
               </button>
             );
           })}
