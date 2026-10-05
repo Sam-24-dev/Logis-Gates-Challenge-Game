@@ -216,8 +216,8 @@ export function ResultsScreen({
                   <span>Fin de ruta ✓</span>
                 </div>
               </section>
-              <p className="results-lead">{modeCopy.lead}</p>
 
+              <p className="results-orientation">Elige tu siguiente experimento.</p>
               <div
                 className={`results-summary${completedDifficulty === "hard" ? " is-challenge" : ""}`}
                 aria-label="Resumen de progreso"
@@ -251,28 +251,16 @@ export function ResultsScreen({
                   </div>
                 ) : null}
               </div>
-            </div>
-
-            <div>
-              <div className="results-mission-note">
-                {completedDifficulty === "hard" ? (
-                  <>
-                    <strong>
-                      {isNewBestChallengeScore
-                        ? "Récord guardado:"
-                        : "Mejor marca:"}
-                    </strong>{" "}
-                    {isNewBestChallengeScore
-                      ? "superaste tu mejor carrera."
-                      : `tu mejor carrera sigue en ${progress.bestChallengeScore} puntos.`}
-                  </>
-                ) : (
-                  <>
-                    <strong>Siguiente experimento:</strong>{" "}
-                    {modeCopy.note.replace("Siguiente experimento: ", "")}
-                  </>
-                )}
-              </div>
+              {completedDifficulty === "hard" ? (
+                <div className="results-mission-note">
+                  <strong>
+                    {isNewBestChallengeScore ? "Récord guardado:" : "Mejor marca:"}
+                  </strong>{" "}
+                  {isNewBestChallengeScore
+                    ? "superaste tu mejor carrera."
+                    : `tu mejor carrera sigue en ${progress.bestChallengeScore} puntos.`}
+                </div>
+              ) : null}
               <div
                 className="results-actions"
                 aria-label="Acciones de resultado"
@@ -301,7 +289,6 @@ export function ResultsScreen({
               </div>
             </div>
           </section>
-
           <aside
             className="results-panel results-lab-card"
             aria-label={
@@ -310,23 +297,34 @@ export function ResultsScreen({
                 : "Resumen educativo de la práctica"
             }
           >
-            <div className="results-badge">Señales estabilizadas</div>
-
-            <div className="results-learned">
-              <h2 id="results-learned-title">Lo que ya dominas</h2>
-              <ul
-                className="results-learned-list"
-                aria-labelledby="results-learned-title"
-              >
-                {learnedGates.map((gate) => (
-                  <li className="results-row" key={gate}>
-                    <b className="results-gate">{gate}</b>
-                    <p>{gateSummaries[gate]}</p>
-                    <span className="results-status">Listo</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <details className="lab-disclosure">
+              <summary>Repasar compuertas y sus reglas</summary>
+              <div className="results-recap-content">
+                <div className="results-badge">Señales estabilizadas</div>
+                <p className="results-lead">{modeCopy.lead}</p>
+                {completedDifficulty === "easy" ? (
+                  <div className="results-mission-note">
+                    <strong>Siguiente experimento:</strong>{" "}
+                    {modeCopy.note.replace("Siguiente experimento: ", "")}
+                  </div>
+                ) : null}
+                <div className="results-learned">
+                  <h2 id="results-learned-title">Lo que ya dominas</h2>
+                  <ul
+                    className="results-learned-list"
+                    aria-labelledby="results-learned-title"
+                  >
+                    {learnedGates.map((gate) => (
+                      <li className="results-row" key={gate}>
+                        <b className="results-gate">{gate}</b>
+                        <p>{gateSummaries[gate]}</p>
+                        <span className="results-status">Listo</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </details>
           </aside>
         </div>
       </div>

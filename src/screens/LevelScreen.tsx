@@ -271,31 +271,8 @@ export function LevelScreen({
               Toca los nodos de entrada dentro del circuito para cambiar la
               señal.
             </p>
-            {isChallenge ? (
-              <section
-                className="level-actions level-submit-actions"
-                aria-label="Envío del reto"
-              >
-                <button
-                  className="level-action-button is-primary"
-                  type="button"
-                  disabled={challengeState?.submissionLocked ?? true}
-                  onClick={onSubmitAnswer}
-                >
-                  Enviar respuesta
-                </button>
-              </section>
-            ) : null}
-          </section>
 
-          <aside
-            className="level-side"
-            aria-label={isChallenge ? "Panel del reto" : "Ayuda del nivel"}
-          >
-            <section className="level-panel level-side-panel">
-              <h2 className="level-side-title">
-                {isChallenge ? "Panel de misión" : "Qué está pasando"}
-              </h2>
+            <section className="level-turn" aria-label="Estado y acción del nivel">
               <p
                 aria-atomic="true"
                 aria-live="polite"
@@ -321,9 +298,7 @@ export function LevelScreen({
               {isChallenge ? (
                 <>
                   <p className="level-feedback-copy">
-                    Reto activo: razona la salida, evita probar al azar y envía
-                    cuando la señal final coincida con el objetivo. El reloj
-                    sigue corriendo si cambias de pestaña.
+                    Enviar comprueba la salida. El reloj continúa entre intentos.
                   </p>
                   {challengeState?.lastWasCorrect === true ? (
                     <div className="level-next-step is-success">
@@ -332,117 +307,143 @@ export function LevelScreen({
                     </div>
                   ) : null}
                   {challengeState?.lastWasCorrect === false ? (
-                    <div className="level-next-step is-danger">
-                      <strong>Racha rota:</strong> la salida enviada no cumple el
-                      objetivo. Cambia una entrada, revisa qué rama bloquea la
-                      señal y vuelve a enviar.
+                    <div className="level-next-step is-danger level-recovery">
+                      <strong>Racha rota:</strong> la salida enviada no cumple el objetivo.
+                      Cambia una entrada para habilitar «Enviar respuesta». No necesitas reiniciar la carrera.
                     </div>
                   ) : null}
+                  <section className="level-actions level-submit-actions" aria-label="Envío del reto">
+                    <button
+                      className="level-action-button is-primary"
+                      type="button"
+                      disabled={challengeState?.submissionLocked ?? true}
+                      onClick={onSubmitAnswer}
+                    >
+                      Enviar respuesta
+                    </button>
+                  </section>
                 </>
               ) : feedback ? (
-                <div
-                  className={`level-education-grid ${feedback.status === "solved" ? "is-solved" : ""}`}
-                >
-                  <article className="level-education-card is-reading">
+                <>
+                  <div className="level-current-reading">
                     <span>Lectura actual</span>
-                    <p>
-                      {feedback.currentCombination} → salida {outputText}
-                    </p>
-                  </article>
-                  <article className="level-education-card">
+                    <p>{feedback.currentCombination} → salida {outputText}</p>
+                  </div>
+                  <section className="level-actions" aria-label="Acción principal de práctica">
+                    {result ? (
+                      <button
+                        className="level-action-button is-primary"
+                        type="button"
+                        onClick={onNextLevel}
+                      >
+                        Continuar
+                      </button>
+                    ) : null}
+                  </section>
+                  <div className="level-rule">
                     <span>Regla lógica</span>
                     <p>{feedback.rule}</p>
-                  </article>
-                  <article className="level-education-card">
-                    <span>Pista</span>
-                    <p>{feedback.hint}</p>
-                  </article>
-                  <article className="level-education-card is-target-row">
-                    <span>Filas objetivo</span>
-                    <p>{feedback.targetSummary}</p>
-                  </article>
-                </div>
+                  </div>
+                </>
               ) : null}
             </section>
+          </section>
+          <aside
+            className="level-side"
+            aria-label={isChallenge ? "Panel del reto" : "Ayuda del nivel"}
+          >
+            <section className="level-panel level-side-panel level-help-panel">
+              <details className="lab-disclosure">
+                <summary>{isChallenge ? "Ver instrucciones del reto" : "Ver pista y tabla de verdad"}</summary>
+                {isChallenge ? (
+                  <p className="level-feedback-copy">
+                    Reto activo: razona la salida, evita probar al azar y envía
+                    cuando la señal final coincida con el objetivo. El reloj
+                    sigue corriendo si cambias de pestaña. «Reiniciar carrera»
+                    vuelve al reto 1; no es necesario para corregir un envío.
+                  </p>
+                ) : feedback ? (
+                  <div className="level-help-content">
+                    <div className="level-education-grid">
+                      <article className="level-education-card">
+                        <span>Pista</span>
+                        <p>{feedback.hint}</p>
+                      </article>
+                      <article className="level-education-card is-target-row">
+                        <span>Filas objetivo</span>
+                        <p>{feedback.targetSummary}</p>
+                      </article>
+                    </div>
+                    <section className="level-panel level-side-panel">
+                      <h2 className="level-side-title">Tabla {level.gates[0]}</h2>
+                      <table
+                        className={`level-truth-table ${pulse ? `is-${pulse}-pulse` : ""}`}
+                        aria-label={`Tabla de verdad de ${heading}`}
+                      >
+                        <thead>
+                          <tr>
+                            {level.inputs.map((input) => (
+                              <th key={input}>{input}</th>
+                            ))}
+                            <th>Salida</th>
+                            <th className="level-truth-status">Estado</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {truthTable.map((row) => {
+                            const rowKey = getCurrentRowKey(level.inputs, row.inputs);
+                            const isCurrent = rowKey === currentRowKey;
+                            const isTarget = row.output;
+                            const rowStatus =
+                              isCurrent && isTarget
+                                ? "Actual y objetivo"
+                                : isCurrent
+                                  ? "Actual"
+                                  : isTarget
+                                    ? "Objetivo"
+                                    : null;
 
-            {!isChallenge ? (
-              <section className="level-panel level-side-panel">
-                <h2 className="level-side-title">Tabla {level.gates[0]}</h2>
-                <table
-                  className={`level-truth-table ${pulse ? `is-${pulse}-pulse` : ""}`}
-                  aria-label={`Tabla de verdad de ${heading}`}
-                >
-                  <thead>
-                    <tr>
-                      {level.inputs.map((input) => (
-                        <th key={input}>{input}</th>
-                      ))}
-                      <th>Salida</th>
-                      <th className="level-truth-status">Estado</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {truthTable.map((row) => {
-                      const rowKey = getCurrentRowKey(level.inputs, row.inputs);
-                      const isCurrent = rowKey === currentRowKey;
-                      const isTarget = row.output;
-                      const rowStatus =
-                        isCurrent && isTarget
-                          ? "Actual y objetivo"
-                          : isCurrent
-                            ? "Actual"
-                            : isTarget
-                              ? "Objetivo"
-                              : null;
-
-                      return (
-                        <tr
-                          className={`${isCurrent ? "is-current" : ""} ${isTarget ? "is-target" : ""}`}
-                          key={rowKey}
-                        >
-                          {level.inputs.map((input) => (
-                            <td key={input}>
-                              {formatValue(row.inputs[input])}
-                            </td>
-                          ))}
-                          <td>{formatValue(row.output)}</td>
-                          <td className="level-truth-status">
-                            {rowStatus ? (
-                              <span className="level-truth-marker">
-                                {rowStatus}
-                              </span>
-                            ) : (
-                              <span aria-hidden="true">—</span>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-                <p className="level-hint-line">
-                  Estado: “Actual” indica tu combinación. “Objetivo” identifica
-                  las filas que producen salida 1.
-                </p>
-              </section>
-            ) : null}
-
-            <section className="level-actions" aria-label="Acciones del nivel">
-              {!isChallenge && result ? (
-                <button
-                  className="level-action-button is-primary"
-                  type="button"
-                  onClick={onNextLevel}
-                >
-                  Continuar
-                </button>
-              ) : null}
+                            return (
+                              <tr
+                                className={`${isCurrent ? "is-current" : ""} ${isTarget ? "is-target" : ""}`}
+                                key={rowKey}
+                              >
+                                {level.inputs.map((input) => (
+                                  <td key={input}>
+                                    {formatValue(row.inputs[input])}
+                                  </td>
+                                ))}
+                                <td>{formatValue(row.output)}</td>
+                                <td className="level-truth-status">
+                                  {rowStatus ? (
+                                    <span className="level-truth-marker">
+                                      {rowStatus}
+                                    </span>
+                                  ) : (
+                                    <span aria-hidden="true">—</span>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                      <p className="level-hint-line">
+                        Estado: “Actual” indica tu combinación. “Objetivo” identifica
+                        las filas que producen salida 1.
+                      </p>
+                    </section>
+                  </div>
+                ) : null}
+              </details>
+            </section>
+            <section className="level-actions" aria-label="Acciones secundarias del nivel">
               <button
                 className="level-action-button"
                 type="button"
                 onClick={onRetry}
               >
-                Reiniciar
+                {isChallenge ? "Reiniciar carrera" : "Reiniciar"}
               </button>
               <button
                 className="level-action-button is-secondary"

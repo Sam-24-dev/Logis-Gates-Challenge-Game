@@ -137,7 +137,7 @@ describe("App", () => {
     );
 
     expect(
-      screen.getByText(/revisa qué rama bloquea la señal/i),
+      screen.getByText(/cambia una entrada para habilitar/i),
     ).toBeInTheDocument();
     expect(screen.queryByText(/filas objetivo/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/regla lógica/i)).not.toBeInTheDocument();
@@ -263,9 +263,11 @@ describe("App", () => {
     expect(
       await screen.findByRole("heading", { name: /nivel 1: compuerta and/i }),
     ).toBeInTheDocument();
+    expect(screen.getByText("Tabla AND")).not.toBeVisible();
+    fireEvent.click(screen.getByText("Ver pista y tabla de verdad", { selector: "summary" }));
     expect(screen.getByText(/lectura actual/i)).toBeInTheDocument();
     expect(screen.getByText(/regla lógica/i)).toBeInTheDocument();
-    expect(screen.getByText(/pista/i)).toBeInTheDocument();
+    expect(screen.getByText("Pista")).toBeInTheDocument();
     expect(screen.getByText(/filas objetivo/i)).toBeInTheDocument();
     expect(screen.getByText(/A=1 · B=0 → salida 0/i)).toBeInTheDocument();
     expect(

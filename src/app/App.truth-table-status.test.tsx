@@ -9,6 +9,9 @@ describe("practice truth-table status", () => {
     fireEvent.click(screen.getByRole("button", { name: /empezar/i }));
     fireEvent.click(screen.getByRole("button", { name: /entrar a práctica/i }));
 
+    const summary = await screen.findByText("Ver pista y tabla de verdad", { selector: "summary" });
+    fireEvent.click(summary);
+
     const table = await screen.findByRole("table", {
       name: /tabla de verdad/i,
     });

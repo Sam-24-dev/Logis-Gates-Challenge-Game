@@ -3741,3 +3741,234 @@
     .results-route-path::before { top: 0.8rem; }
     .results-route-mark small { font-size: 0.625rem; }
 }
+
+/* R3: compact presentation; CircuitBoard geometry and controls stay unchanged. */
+.level-topbar {
+    margin-bottom: .65rem;
+}
+.level-brand {
+    font-size: 1.65rem;
+}
+.level-header {
+    gap: .65rem;
+    margin-bottom: .75rem;
+}
+.level-eyebrow {
+    margin-bottom: .35rem;
+    letter-spacing: .1em;
+}
+.level-title {
+    font-size: clamp(1.65rem,3vw,2.5rem);
+    line-height: 1.08;
+    letter-spacing: -.045em;
+}
+.level-lead {
+    margin-top: .5rem;
+    font-size: .95rem;
+    line-height: 1.45;
+}
+.level-progress-card {
+    padding: .45rem .65rem;
+}
+.level-progress-card span {
+    margin-bottom: .25rem;
+}
+.level-progress-card strong {
+    font-size: 1.5rem;
+}
+.level-progress-bar {
+    height: .3rem;
+    margin-top: .35rem;
+}
+.level-challenge-hud {
+    grid-template-columns: repeat(auto-fit,minmax(7rem,1fr));
+    gap: .4rem;
+    margin-bottom: .65rem;
+}
+.level-hud-card {
+    padding: .45rem .6rem;
+}
+.level-hud-card span {
+    font-size: .75rem;
+    letter-spacing: 0;
+    text-transform: none;
+}
+.level-hud-card strong {
+    font-size: 1.3rem;
+    margin-top: .25rem;
+}
+.level-board-hint {
+    font-size: .875rem;
+    margin-top: .5rem;
+    line-height: 1.45;
+}
+.level-turn {
+    display: grid;
+    gap: .65rem;
+    margin-top: .65rem;
+}
+.level-state-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin: 0;
+}
+.level-mini-state {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .4rem .6rem;
+    text-align: left;
+}
+.level-mini-state span {
+    font-size: .8rem;
+}
+.level-mini-state strong {
+    font-size: 1.2rem;
+    margin: 0;
+}
+.level-current-reading,.level-rule {
+    padding: .45rem .65rem;
+    border-left: 2px solid var(--color-accent);
+    background: rgb(5 10 18 / .4);
+}
+.level-current-reading span,.level-rule span {
+    font: .75rem var(--font-mono);
+    color: var(--color-accent-strong);
+}
+.level-current-reading p,.level-rule p {
+    margin: .25rem 0 0;
+    color: var(--color-muted);
+    font-size: .95rem;
+    line-height: 1.45;
+}
+.level-recovery {
+    margin: 0;
+    padding: .55rem .65rem;
+    border-left: 2px solid var(--color-warm);
+    color: var(--color-muted);
+    font-size: .95rem;
+    line-height: 1.45;
+}
+.level-submit-actions {
+    margin-top: 0;
+}
+.level-next-step {
+    margin-top: 0;
+}
+.level-help-panel {
+    grid-column: 1 / -1;
+}
+.lab-disclosure summary {
+    min-height: 2.75rem;
+    padding: .4rem .2rem;
+    color: var(--color-accent-strong);
+    font-family: var(--font-mono);
+    font-size: .875rem;
+    line-height: 1.5;
+    cursor: pointer;
+}
+.lab-disclosure summary::marker {
+    color: var(--color-warm);
+}
+.lab-disclosure summary:focus-visible {
+    outline: 2px solid var(--color-accent-strong);
+    outline-offset: 4px;
+    border-radius: .25rem;
+}
+.lab-disclosure[open] summary {
+    margin-bottom: .6rem;
+}
+.level-help-content {
+    display: grid;
+    gap: .85rem;
+}
+.level-help-content .level-side-panel {
+    padding: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    animation: none;
+    overflow: visible;
+}
+.level-help-content .level-side-panel::after {
+    display: none;
+}
+.results-topbar {
+    margin-bottom: .65rem;
+}
+.results-brand {
+    font-size: 1.65rem;
+}
+.results-hero {
+    gap: .8rem;
+    padding: clamp(1rem,3vw,1.5rem);
+}
+.results-title {
+    font-size: clamp(2.15rem,6vw,3.8rem);
+    margin-bottom: .75rem;
+}
+.results-eyebrow {
+    margin-bottom: .6rem;
+}
+.results-orientation {
+    margin: .65rem 0 0;
+    color: var(--color-muted);
+    font-size: .95rem;
+    line-height: 1.45;
+}
+.results-summary {
+    margin-top: .75rem;
+    gap: .6rem;
+}
+.results-metric {
+    min-height: 4.3rem;
+    padding: .65rem;
+}
+.results-actions {
+    margin-top: .8rem;
+    gap: .6rem;
+}
+.results-mission-note {
+    margin-top: .65rem;
+    margin-bottom: 0;
+    padding: .6rem;
+    font-size: .95rem;
+    line-height: 1.45;
+}
+.results-lab-card {
+    padding: 1rem;
+}
+.results-recap-content {
+    display: grid;
+    gap: .8rem;
+}
+.results-recap-content .results-lead {
+    font-size: .95rem;
+    line-height: 1.45;
+    margin: 0;
+}
+.results-learned h2 {
+    font-size: 1.6rem;
+}
+.results-learned-list {
+    gap: .5rem;
+}
+.results-row {
+    gap: .4rem;
+    padding: .6rem;
+}
+@media (max-width:42.5rem) {
+    .level-progress-card {
+        display: grid;
+        grid-template-columns: auto auto 1fr;
+        gap: .65rem;
+        align-items: center;
+    }
+    .level-progress-card span,.level-progress-card strong,.level-progress-bar {
+        margin: 0;
+    }
+    .level-brand,.results-brand {
+        font-size: 1.4rem;
+    }
+}
