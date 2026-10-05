@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { defaultProgress } from "../core/progress";
 import { levelsByDifficulty } from "../data/levels";
@@ -92,6 +92,7 @@ describe("ResultsScreen", () => {
     expect(screen.getByText("Compuertas")).toBeInTheDocument();
     expect(screen.queryByText("Niveles", { exact: true })).not.toBeInTheDocument();
     expect(screen.queryByRole("list", { name: "Niveles completados" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText("Repasar compuertas y sus reglas", { selector: "summary" }));
     const learned = screen.getByRole("list", { name: "Lo que ya dominas" });
     expect(within(learned).getAllByRole("listitem")).toHaveLength(7);
     screen.getByRole("button", { name: "Iniciar reto" }).click();
@@ -126,6 +127,7 @@ describe("ResultsScreen", () => {
     expect(screen.getByText(/tu mejor carrera sigue en 630 puntos/i)).toBeInTheDocument();
     expect(screen.queryByText("Niveles", { exact: true })).not.toBeInTheDocument();
     expect(screen.queryByRole("list", { name: "Niveles completados" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText("Repasar compuertas y sus reglas", { selector: "summary" }));
     expect(within(screen.getByRole("list", { name: "Lo que ya dominas" })).getAllByRole("listitem")).toHaveLength(7);
   });
 
@@ -145,5 +147,43 @@ describe("ResultsScreen", () => {
     const route = screen.getByRole("region", { name: "Ruta completada" });
     expect(within(route).getByText("3/3")).toBeInTheDocument();
     expect(route.querySelectorAll(".results-route-mark")).toHaveLength(3);
+  });
+
+  it.each(["easy", "hard"] as const)("keeps %s completion, metrics and actions before an optional recap", (difficulty) => {
+    render(
+      <ResultsScreen
+        challengeSummary={{ score: 420, streak: 2 }}
+        completedDifficulty={difficulty}
+        completedLevels={Object.values(levelsByDifficulty[difficulty])}
+        isNewBestChallengeScore={false}
+        onChallenge={vi.fn()}
+        onHome={vi.fn()}
+        onPracticeAgain={vi.fn()}
+        progress={{ ...defaultProgress, bestChallengeScore: 630 }}
+      />,
+    );
+    const summary = screen.getByText("Repasar compuertas y sus reglas", { selector: "summary" });
+    const recap = summary.closest("details")!;
+    const learned = screen.getByText("Lo que ya dominas");
+    const actions = screen.getByLabelText("Acciones de resultado");
+    const route = screen.getByRole("region", { name: "Ruta completada" });
+    expect(recap).not.toHaveAttribute("open");
+    expect(learned).not.toBeVisible();
+    expect(route.closest("details")).toBeNull();
+    expect(screen.getByLabelText("Resumen de progreso").closest("details")).toBeNull();
+    expect(actions.closest("details")).toBeNull();
+    expect(actions.compareDocumentPosition(recap) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
+    expect(screen.getByText("Elige tu siguiente experimento.")).toBeVisible();
+    if (difficulty === "hard") {
+      expect(screen.getByText("Mejor racha").parentElement).toHaveTextContent("x2");
+      expect(screen.getByText("Puntos").parentElement).toHaveTextContent("420");
+    }
+    fireEvent.click(summary);
+    expect(recap).toHaveAttribute("open");
+    expect(learned).toBeVisible();
+    expect(within(screen.getByRole("list", { name: "Lo que ya dominas" })).getAllByRole("listitem")).toHaveLength(7);
+    fireEvent.click(summary);
+    expect(learned).not.toBeVisible();
+    for (const button of within(actions).getAllByRole("button")) expect(button).toBeVisible();
   });
 });
