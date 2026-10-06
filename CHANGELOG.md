@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.3.0](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/compare/logic-gates-challenge-game-v2.2.0...logic-gates-challenge-game-v2.3.0) (2026-10-06)
+
+
+### Features
+
+* **ui:** streamline level flow and results recap ([edc10f6](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/commit/edc10f66520ba217dde47b5d1562c30afd210c64))
+* **ui:** streamline level flow and results recap ([bd5b08d](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/commit/bd5b08de7e347a0ccc6a25981eb5363c655c399a))
+
+
+### Bug Fixes
+
+* **circuit:** prevent overlapping input controls and preserve receiver identity ([a46220d](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/commit/a46220d0633d641f5c465b554c3b6b0d879588e2))
+* **circuit:** prevent overlapping input controls and preserve receiver identity ([b0eb646](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/commit/b0eb646351c8468e854a8ffb96dc5135d0452263))
+* **deps:** update source-map-js to 1.2.2 ([9d541eb](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/commit/9d541eb62dcebcbbed2159f3807a76e8dcd3bec9))
+* **deps:** update vulnerable brace-expansion resolutions ([fb3f1f8](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/commit/fb3f1f8141734f99379501c4fdf5a255dd11fe21))
+* **deps:** update vulnerable brace-expansion resolutions ([#52](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/issues/52)) ([9c73770](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/commit/9c7377011079e09c43099dacf56ff6f5a3e5d9ef))
+
 ## [2.2.0](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/compare/logic-gates-challenge-game-v2.1.1...logic-gates-challenge-game-v2.2.0) (2026-09-28)
 
 
