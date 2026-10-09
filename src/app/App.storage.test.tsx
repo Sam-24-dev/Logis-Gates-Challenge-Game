@@ -11,6 +11,32 @@ function storedProgress(patch: ProgressPatch) {
   return JSON.stringify({ ...defaultProgress, ...patch });
 }
 
+async function enterPractice() {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: /empezar/i }));
+  fireEvent.click(screen.getByRole("button", { name: /entrar a práctica/i }));
+  await screen.findByRole("heading", { name: /nivel 1: compuerta and/i });
+}
+
+function solvePracticeLevel(input: string) {
+  const controls = within(screen.getByLabelText("Controles del circuito"));
+  fireEvent.click(
+    controls.getByRole("button", { name: new RegExp(`entrada ${input}`, "i") }),
+  );
+
+  const turn = within(screen.getByLabelText("Estado y acción del nivel"));
+  return turn.getByRole("button", { name: "Continuar" });
+}
+
+async function prepareFinalPracticeLevel() {
+  await enterPractice();
+  for (const input of ["b", "a", "a", "a", "b", "a"]) {
+    fireEvent.click(solvePracticeLevel(input));
+  }
+
+  return solvePracticeLevel("b");
+}
+
 function solveChallengeLevel(inputsToToggle: string[]) {
   const controls = within(screen.getByLabelText("Controles del circuito"));
   for (const input of inputsToToggle) {
@@ -30,6 +56,125 @@ describe("App progress storage", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  it("writes practice progress once when the final level advances to results", async () => {
+    const next = await prepareFinalPracticeLevel();
+    expect(
+      JSON.parse(window.localStorage.getItem(progressStorageKey) ?? "{}"),
+    ).toMatchObject({ practiceCompletedLevels: 6 });
+
+    const setItem = vi.spyOn(Storage.prototype, "setItem");
+    fireEvent.click(next);
+
+    expect(
+      await screen.findByRole("heading", { name: /laboratorio completado/i }),
+    ).toBeVisible();
+    const transitionWrites = setItem.mock.calls.filter(
+      ([key]) => key === progressStorageKey,
+    );
+    expect(transitionWrites).toHaveLength(1);
+    expect(JSON.parse(transitionWrites[0][1])).toEqual({
+      ...defaultProgress,
+      practiceCompletedLevels: 7,
+    });
+    expect(window.localStorage.getItem(progressStorageKey)).toBe(
+      transitionWrites[0][1],
+    );
+  }, 10000);
+
+  it("keeps a single intermediate practice save when advancing to the next level", async () => {
+    await enterPractice();
+    const next = solvePracticeLevel("b");
+    const setItem = vi.spyOn(Storage.prototype, "setItem");
+    fireEvent.click(next);
+
+    expect(
+      await screen.findByRole("heading", { name: /nivel 2: compuerta or/i }),
+    ).toBeVisible();
+    const transitionWrites = setItem.mock.calls.filter(
+      ([key]) => key === progressStorageKey,
+    );
+    expect(transitionWrites).toHaveLength(1);
+    expect(JSON.parse(transitionWrites[0][1])).toEqual({
+      ...defaultProgress,
+      practiceCompletedLevels: 1,
+    });
+    expect(window.localStorage.getItem(progressStorageKey)).toBe(
+      transitionWrites[0][1],
+    );
+  });
+
+  it("merges newer stored records into the single final practice save", async () => {
+    const next = await prepareFinalPracticeLevel();
+    const newerProgress = {
+      ...defaultProgress,
+      bestChallengeScore: 3200,
+      bestChallengeStreak: 3,
+      challengeCompletedLevels: 4,
+      practiceCompletedLevels: 6,
+    };
+    window.localStorage.setItem(
+      progressStorageKey,
+      JSON.stringify(newerProgress),
+    );
+
+    const setItem = vi.spyOn(Storage.prototype, "setItem");
+    fireEvent.click(next);
+
+    expect(
+      await screen.findByRole("heading", { name: /laboratorio completado/i }),
+    ).toBeVisible();
+    const transitionWrites = setItem.mock.calls.filter(
+      ([key]) => key === progressStorageKey,
+    );
+    expect(transitionWrites).toHaveLength(1);
+    expect(JSON.parse(transitionWrites[0][1])).toEqual({
+      ...newerProgress,
+      practiceCompletedLevels: 7,
+    });
+    expect(window.localStorage.getItem(progressStorageKey)).toBe(
+      transitionWrites[0][1],
+    );
+  });
+
+  it("reaches practice results after one rejected final save without claiming persisted completion", async () => {
+    const next = await prepareFinalPracticeLevel();
+    const previousProgress = window.localStorage.getItem(progressStorageKey);
+    expect(JSON.parse(previousProgress ?? "{}")).toMatchObject({
+      practiceCompletedLevels: 6,
+    });
+
+    const setItem = vi
+      .spyOn(Storage.prototype, "setItem")
+      .mockImplementation(() => {
+        throw new DOMException("storage full", "QuotaExceededError");
+      });
+    fireEvent.click(next);
+
+    expect(
+      await screen.findByRole("heading", { name: /laboratorio completado/i }),
+    ).toBeVisible();
+    const transitionAttempts = setItem.mock.calls.filter(
+      ([key]) => key === progressStorageKey,
+    );
+    expect(transitionAttempts).toHaveLength(1);
+    expect(JSON.parse(transitionAttempts[0][1])).toMatchObject({
+      practiceCompletedLevels: 7,
+    });
+    expect(window.localStorage.getItem(progressStorageKey)).toBe(
+      previousProgress,
+    );
+
+    const actions = within(screen.getByLabelText("Acciones de resultado"));
+    fireEvent.click(actions.getByRole("button", { name: "Volver al inicio" }));
+    fireEvent.click(screen.getByRole("button", { name: /empezar/i }));
+    expect(
+      screen.getByRole("progressbar", { name: /progreso de práctica/i }),
+    ).toHaveAttribute("value", "6");
+    expect(window.localStorage.getItem(progressStorageKey)).toBe(
+      previousProgress,
+    );
   });
 
   it("refreshes visible progress after another tab writes storage", () => {
