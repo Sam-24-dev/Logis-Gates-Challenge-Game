@@ -183,6 +183,7 @@ export function App() {
   );
   const [challengeScore, setChallengeScore] = useState(0);
   const [challengeStreak, setChallengeStreak] = useState(0);
+  const [challengeRunBestStreak, setChallengeRunBestStreak] = useState(0);
   const [challengeWrongSubmissions, setChallengeWrongSubmissions] = useState(0);
   const [challengeLastPoints, setChallengeLastPoints] = useState<number | null>(
     null,
@@ -295,6 +296,7 @@ export function App() {
   function resetChallengeRun() {
     setChallengeScore(0);
     setChallengeStreak(0);
+    setChallengeRunBestStreak(0);
     setChallengeWrongSubmissions(0);
     setChallengeLastPoints(null);
     setChallengeLastWasCorrect(null);
@@ -409,6 +411,7 @@ export function App() {
 
     setChallengeScore(finalScore);
     setChallengeStreak(finalStreak);
+    setChallengeRunBestStreak((previous) => Math.max(previous, finalStreak));
     const previousPersistedProgress = persistProgress({
       bestChallengeScore: isCompletingChallenge ? finalScore : 0,
       bestChallengeStreak: finalStreak,
@@ -504,7 +507,7 @@ export function App() {
             <LazyResultsScreen
               challengeSummary={{
                 score: challengeScore,
-                streak: challengeStreak,
+                runBestStreak: challengeRunBestStreak,
               }}
               completedDifficulty={difficulty}
               completedLevels={Object.values(levelsByDifficulty[difficulty])}

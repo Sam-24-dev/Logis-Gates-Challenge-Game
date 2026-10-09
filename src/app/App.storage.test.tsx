@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   defaultProgress,
@@ -12,13 +12,15 @@ function storedProgress(patch: ProgressPatch) {
 }
 
 function solveChallengeLevel(inputsToToggle: string[]) {
+  const controls = within(screen.getByLabelText("Controles del circuito"));
   for (const input of inputsToToggle) {
     fireEvent.click(
-      screen.getByRole("button", { name: new RegExp(`entrada ${input}`, "i") }),
+      controls.getByRole("button", { name: new RegExp(`entrada ${input}`, "i") }),
     );
   }
 
-  fireEvent.click(screen.getByRole("button", { name: /enviar respuesta/i }));
+  const turn = within(screen.getByLabelText("Estado y acción del nivel"));
+  fireEvent.click(turn.getByRole("button", { name: /enviar respuesta/i }));
 }
 
 describe("App progress storage", () => {
@@ -117,6 +119,7 @@ describe("App progress storage", () => {
       await screen.findByRole("heading", { name: /reto completado/i }),
     ).toBeInTheDocument();
     expect(setItem).toHaveBeenCalled();
+    expect(screen.getByText("Mejor racha").parentElement).toHaveTextContent("x7");
     expect(screen.queryByText(/récord guardado/i)).not.toBeInTheDocument();
   });
 });
