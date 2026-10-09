@@ -43,7 +43,7 @@ describe("ResultsScreen", () => {
   it("labels the hard-mode educational summary as a challenge", () => {
     render(
       <ResultsScreen
-        challengeSummary={{ score: 420, streak: 2 }}
+        challengeSummary={{ score: 420, runBestStreak: 2 }}
         completedDifficulty="hard"
         completedLevels={Object.values(levelsByDifficulty.hard)}
         isNewBestChallengeScore={false}
@@ -103,11 +103,11 @@ describe("ResultsScreen", () => {
     expect(onHome).toHaveBeenCalledOnce();
   });
 
-  it("keeps challenge score, streak and record separate from the shared route", () => {
+  it("keeps challenge score, run best streak and historical records separate from the shared route", () => {
     const levels = Object.values(levelsByDifficulty.hard);
     render(
       <ResultsScreen
-        challengeSummary={{ score: 420, streak: 2 }}
+        challengeSummary={{ score: 420, runBestStreak: 5 }}
         completedDifficulty="hard"
         completedLevels={levels}
         isNewBestChallengeScore={false}
@@ -122,7 +122,7 @@ describe("ResultsScreen", () => {
     expect(within(route).getByText(`${levels.length}/${levels.length}`)).toBeInTheDocument();
     expect(route.querySelectorAll(".results-route-mark")).toHaveLength(levels.length);
     expect(screen.getByText("Puntos").parentElement).toHaveTextContent("420");
-    expect(screen.getByText("Mejor racha").parentElement).toHaveTextContent("x2");
+    expect(screen.getByText("Mejor racha").parentElement).toHaveTextContent("x5");
     expect(screen.getByText("Mejor marca").parentElement).toHaveTextContent("630");
     expect(screen.getByText(/tu mejor carrera sigue en 630 puntos/i)).toBeInTheDocument();
     expect(screen.queryByText("Niveles", { exact: true })).not.toBeInTheDocument();
@@ -152,7 +152,7 @@ describe("ResultsScreen", () => {
   it.each(["easy", "hard"] as const)("keeps %s completion, metrics and actions before an optional recap", (difficulty) => {
     render(
       <ResultsScreen
-        challengeSummary={{ score: 420, streak: 2 }}
+        challengeSummary={{ score: 420, runBestStreak: 2 }}
         completedDifficulty={difficulty}
         completedLevels={Object.values(levelsByDifficulty[difficulty])}
         isNewBestChallengeScore={false}

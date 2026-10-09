@@ -320,6 +320,9 @@ describe("App", () => {
     expect(savedProgress.challengeCompletedLevels).toBe(7);
     expect(savedProgress.bestChallengeScore).toBeGreaterThan(0);
     expect(savedProgress.bestChallengeStreak).toBe(7);
+    expect(screen.getByText("Mejor racha").parentElement).toHaveTextContent(
+      "x" + savedProgress.challengeCompletedLevels,
+    );
   });
 
   it("shows the results screen after completing the practice route", async () => {

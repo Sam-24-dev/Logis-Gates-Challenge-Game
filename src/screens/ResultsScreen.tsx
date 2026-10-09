@@ -3,7 +3,7 @@ import type { StoredProgress } from "../core/progress";
 
 type ChallengeSummary = {
   score: number;
-  streak: number;
+  runBestStreak: number;
 };
 
 type ResultsScreenProps = {
@@ -240,7 +240,7 @@ export function ResultsScreen({
                   </span>
                   <strong>
                     {completedDifficulty === "hard"
-                      ? `x${challengeSummary?.streak ?? 0}`
+                      ? `x${challengeSummary?.runBestStreak ?? 0}`
                       : learnedGates.length}
                   </strong>
                 </div>
