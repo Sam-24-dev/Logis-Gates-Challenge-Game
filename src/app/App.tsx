@@ -363,9 +363,6 @@ export function App() {
       return;
     }
 
-    if (difficulty === "easy") {
-      persistProgress({ practiceCompletedLevels: totalLevels });
-    }
 
     prepareLevelClock();
     setScreen("results");
