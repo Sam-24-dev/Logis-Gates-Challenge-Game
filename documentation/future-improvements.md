@@ -1,6 +1,6 @@
 # Future improvements
 
-The V2 production app is stable. These ideas are optional next steps for a future V3 or portfolio polish pass.
+The V2 app is deployed. These ideas are optional proposals for a future V3 or portfolio polish pass, not implemented features.
 
 ## Recommended priority
 
@@ -85,7 +85,7 @@ Do this only after verifying it does not complicate Vercel deployment or stale c
 
 ## 6. Accessibility deep pass with assistive tech
 
-The app already scores 100 in Lighthouse accessibility, but a future deep pass could include:
+The historical [Phase 10 QA report](./phase10-final-qa-report.md) recorded Lighthouse accessibility 100 on a local preview of a production build, not a WCAG or assistive-technology certification. A future deep pass could include:
 
 - keyboard-only playthrough on every mode
 - screen reader smoke test
@@ -95,7 +95,7 @@ The app already scores 100 in Lighthouse accessibility, but a future deep pass c
 
 ## 7. Performance micro-optimizations
 
-Current production performance is already strong. Remaining technical opportunities are optional:
+Further performance work is optional and should be driven by reproducible measurements on the target devices:
 
 - reduce render-blocking CSS further with route-specific CSS or critical CSS
 - reduce unused initial JavaScript beyond the current lazy chunks
