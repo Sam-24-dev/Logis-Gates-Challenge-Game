@@ -109,6 +109,7 @@ export function LevelScreen({
   const targetOutput = "1";
   const [pulse, setPulse] = useState<PulseKind | null>(null);
   const hasMounted = useRef(false);
+  const levelTitleRef = useRef<HTMLHeadingElement>(null);
 
   useLayoutEffect(() => {
     if (isChallenge) {
@@ -223,7 +224,7 @@ export function LevelScreen({
             <div className="level-header">
               <div>
                 <p className="level-eyebrow">Circuito activo</p>
-                <h1 id="level-title" className="level-title" tabIndex={-1}>
+                <h1 id="level-title" className="level-title" tabIndex={-1} ref={levelTitleRef}>
                   {heading}
                 </h1>
                 <p className="level-lead">
@@ -317,7 +318,18 @@ export function LevelScreen({
                       className="level-action-button is-primary"
                       type="button"
                       disabled={challengeState?.submissionLocked ?? true}
-                      onClick={onSubmitAnswer}
+                      onClick={(event) => {
+                        if (
+                          onSubmitAnswer &&
+                          !result &&
+                          !(challengeState?.submissionLocked ?? true) &&
+                          event.detail === 0 &&
+                          document.activeElement === event.currentTarget
+                        ) {
+                          levelTitleRef.current?.focus();
+                        }
+                        onSubmitAnswer?.();
+                      }}
                     >
                       Enviar respuesta
                     </button>
