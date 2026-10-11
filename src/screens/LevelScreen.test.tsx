@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { levelsByDifficulty } from "../data/levels";
 import { LevelScreen } from "./LevelScreen";
@@ -106,6 +106,112 @@ describe("LevelScreen R3", () => {
     expect(screen.queryByText(/cambia una entrada para habilitar/i)).not.toBeInTheDocument();
     fireEvent.click(send);
     expect(props.onSubmitAnswer).toHaveBeenCalledOnce();
+  });
+
+  it("focuses the level heading before an incorrect keyboard submission and preserves recovery focus", async () => {
+    vi.useFakeTimers();
+    try {
+      const props = challengeProps();
+      const readyState = {
+        ...props.challengeState,
+        hasSubmittedCurrentLevel: false,
+        lastWasCorrect: null,
+        submissionLocked: false,
+      };
+      let focusAtSubmit: Element | null = null;
+      const onSubmitAnswer = vi.fn(() => {
+        focusAtSubmit = document.activeElement;
+      });
+      const { rerender, unmount } = render(
+        <LevelScreen {...props} challengeState={readyState} onSubmitAnswer={onSubmitAnswer} />,
+      );
+      const heading = screen.getByRole("heading", { name: /reto 1: XOR bajo presión/i });
+      const send = screen.getByRole("button", { name: "Enviar respuesta" });
+      send.focus();
+      expect(send).toHaveFocus();
+      expect(send).toBeEnabled();
+
+      fireEvent.click(send, { detail: 0 });
+
+      expect(onSubmitAnswer).toHaveBeenCalledOnce();
+      expect(focusAtSubmit).toBe(heading);
+      expect(heading).toHaveFocus();
+      rerender(<LevelScreen {...props} onSubmitAnswer={onSubmitAnswer} />);
+      expect(send).toBeDisabled();
+      expect(heading).toHaveFocus();
+      expect(screen.getByText(/cambia una entrada para habilitar/i)).toBeVisible();
+      fireEvent.click(send, { detail: 0 });
+      expect(onSubmitAnswer).toHaveBeenCalledOnce();
+      expect(heading).toHaveFocus();
+
+      const input = screen.getByRole("button", { name: /nodo de entrada a/i });
+      input.focus();
+      fireEvent.click(input);
+      expect(props.onToggleInput).toHaveBeenCalledExactlyOnceWith("A");
+      rerender(
+        <LevelScreen
+          {...props}
+          inputStates={{ A: true, B: false, C: false }}
+          challengeState={readyState}
+          onSubmitAnswer={onSubmitAnswer}
+        />,
+      );
+      expect(send).toBeEnabled();
+      expect(input).toHaveFocus();
+      expect(screen.getByRole("status")).toBeEmptyDOMElement();
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(800);
+      });
+      expect(input).toHaveFocus();
+      expect(onSubmitAnswer).toHaveBeenCalledOnce();
+      unmount();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it.each([
+    "correct answer",
+    "pointer click",
+    "focus elsewhere",
+    "locked submission",
+    "missing callback",
+    "missing challenge state",
+  ])("does not transfer submission focus for %s", (scenario) => {
+    const props = challengeProps();
+    render(
+      <LevelScreen
+        {...props}
+        result={scenario === "correct answer"}
+        challengeState={scenario === "missing challenge state" ? undefined : {
+          ...props.challengeState,
+          hasSubmittedCurrentLevel: false,
+          lastWasCorrect: null,
+          submissionLocked: scenario === "locked submission",
+        }}
+        onSubmitAnswer={scenario === "missing callback" ? undefined : props.onSubmitAnswer}
+      />,
+    );
+    const heading = screen.getByRole("heading", { name: /reto 1: XOR bajo presión/i });
+    const send = screen.getByRole("button", { name: "Enviar respuesta" });
+    const isBlocked = scenario === "locked submission" || scenario === "missing challenge state";
+    const focusTarget = scenario === "focus elsewhere" || isBlocked
+      ? screen.getByRole("button", { name: /nodo de entrada a/i })
+      : send;
+    focusTarget.focus();
+    expect(focusTarget).toHaveFocus();
+    if (isBlocked) expect(send).toBeDisabled();
+    else expect(send).toBeEnabled();
+
+    fireEvent.click(send, { detail: scenario === "pointer click" ? 1 : 0 });
+
+    expect(focusTarget).toHaveFocus();
+    expect(heading).not.toHaveFocus();
+    if (isBlocked || scenario === "missing callback") {
+      expect(props.onSubmitAnswer).not.toHaveBeenCalled();
+    } else {
+      expect(props.onSubmitAnswer).toHaveBeenCalledOnce();
+    }
   });
 
   it("preserves the existing practice controls and callbacks outside help", () => {
