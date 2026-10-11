@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.1](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/compare/logic-gates-challenge-game-v2.3.0...logic-gates-challenge-game-v2.3.1) (2026-10-11)
+
+
+### Bug Fixes
+
+* **challenge:** show run best streak in results ([09443ac](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/commit/09443ac0896590675439957179eab5c46fcb2657))
+* **practice:** persist final progress once ([81e9cde](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/commit/81e9cde3e296c0aea24ca34ac7564ca07fd42bdf))
+
 ## [2.3.0](https://github.com/Sam-24-dev/Logis-Gates-Challenge-Game/compare/logic-gates-challenge-game-v2.2.0...logic-gates-challenge-game-v2.3.0) (2026-10-06)
 
 
